@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>管理员信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <label for="L_firmname" class="layui-form-label">
+                        <span class="x-red">*</span>管理员账号
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input" id="L_name">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>角色选择
+                    </label>
+                    <div class="layui-input-inline">
+                        <select name="roleId" required="" lay-verify="required" lay-search="" lay-filter="role" id="L_role">
+                            <!-- <option value="">请选择</option>
+                            <option value="0">名称1</option>
+                            <option value="1">名称2</option>
+                            <option value="2">名称3</option> -->
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>所属部门
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_department" required="" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>组织机构
+                    </label>
+                    <div class="layui-input-inline">
+                        <select required="" lay-verify="required" lay-filter="" id="L_organization" disabled>
+                            <!--  <option value="">请输入或选择</option>
+                        <option value="0">天津总公司</option>
+                        <option value="1">成都分公司</option> -->
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>地区
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_region" required="" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row" id="L_pwdContainer">
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>设置密码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="password" required="" lay-verify="required" autocomplete="off" class="layui-input" id="L_password">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="" class="layui-form-label">
+                        <span class="x-red">*</span>确认密码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" required="" lay-verify="required|repass" autocomplete="off" class="layui-input" id="L_repassword">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    //角色下拉
+    utils.getSelectList('#L_role', 1, 1);
+    //组织机构下拉
+    utils.getSelectList('#L_organization', 0, 0);
+
+    (utils.GetUrlpara('id') != null) && detail();
+
+    function detail() {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/admin/selectAdmin',
+                data: JSON.stringify({ id: utils.GetUrlpara('id') }),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_pwdContainer').detach();
+                $('#L_name').val(res.data.name);
+                if (res.data.roleId != null) {
+                    $('#L_role').find('option[value="' + res.data.roleId + '"]').prop('selected', true);
+                    formSelected(res.data.roleId)
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+
+    function addSubmit(data) {
+        //新增
+        options(data.field, '/admin/addAdmin');
+    }
+
+    function editSubmit(data) {
+        //编辑
+        data.field.id = utils.GetUrlpara('id');
+        options(data.field, '/admin/editAdmin');
+    }
+
+    function options(data, url) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + url,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Number(res.result) == 100) {
+                    utils._msg('操作成功', function() {
+                        parent.window.location.reload(true);
+                    })
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function formSelected(value) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/role/selectrole',
+                data: JSON.stringify({ id: value }),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_department').val(res.data.department);
+                $('#L_organization').find('option[value="' + res.data.organid + '"]').prop('selected', true);
+                $('#L_region').val(res.data.region);
+                form.render('select');
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    form.on('select(role)', function(data) {
+        if (data.value && (data.value != '')) {
+            formSelected(data.value);
+        } else {
+            $('#L_department').val('');
+            $('#L_organization').find('option[value=""]').prop('selected', true);
+            $('#L_region').val('');
+            form.render('select');
+        }
+    });
+
+    //自定义验证规则
+    form.verify({
+        repass: function(value) {
+            if ($('#L_password').val() != $('#L_repassword').val()) {
+                return '两次密码不一致';
+            }
+        }
+    });
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        // console.log(JSON.stringify(data.field));
+        utils.GetUrlpara('id') != null ? editSubmit(data) : addSubmit(data);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

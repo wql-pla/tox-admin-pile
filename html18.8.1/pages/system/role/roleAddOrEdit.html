@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>角色信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../lib/layui-select-multiple/formSelects-v4.css">
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_rolename" class="layui-form-label">
+                    <span class="x-red">*</span>角色名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="rolename" required="" lay-verify="required" autocomplete="off" class="layui-input" id="L_rolename">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_department" class="layui-form-label">
+                    <span class="x-red">*</span>所属部门
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="department" required="" lay-verify="required" autocomplete="off" class="layui-input" id="L_department">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_address" class="layui-form-label">
+                    <span class="x-red">*</span>组织机构
+                </label>
+                <div class="layui-input-inline">
+                    <select name="organid" lay-search="" required="" lay-verify="required" lay-filter="" id="L_organization">
+                        <!--  <option value="">请输入或选择</option>
+                        <option value="0">天津总公司</option>
+                        <option value="1">成都分公司</option> -->
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_authority" class="layui-form-label">
+                    <span class="x-red">*</span>权限选择
+                </label>
+                <div class="layui-input-block">
+                    <select name="basisList" lay-filter="authority" xm-select="authoritySelect" xm-select-search="" xm-select-search-type="dl" xm-select-show-count="2" xm-select-skin="default" lay-verify="required" id="L_authority">
+                    </select>
+                </div>
+            </div>
+            <!-- 权限变更提示 -->
+            <div class="layui-form-item" id="authorityTips" style="display: none;">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-block">
+                    <span class="x-red">此管理员若绑定该角色，当权限变更之后，须重新登录才能生效！！</span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui-select-multiple/formSelects-v4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var selectedArr = [];
+    utils.getSelectList('#L_organization', 0, 0);
+    
+    (utils.GetUrlpara('id') != null) && detail();
+
+    // 查看详情
+    function detail() {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/role/selectrole',
+                data: JSON.stringify({ id: utils.GetUrlpara('id') }),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_rolename').val(res.data.rolename);
+                $('#L_department').val(res.data.department);
+                $('#L_organization').find('option[value="' + res.data.organid + '"]').prop('selected', true);
+                form.render('select');
+                for (var i = 0; i < res.data.basisList.length; i++) {
+                    selectedArr.push(`${res.data.basisList[i].faid}/${res.data.basisList[i].basisid}`);
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    //server模式
+    formSelects.data('authoritySelect', 'server', {
+        url: ajaxUrl + '/basis/selectFaBasis',
+        linkage: true,
+        linkageWidth: 150,
+        beforeSuccess: function(id, url, searchVal, result) {
+            var res = result.data;
+            $.each(res, function(index, item) {
+                item && (item.name = item.name, item.value = item.id, item.children = item.bason);
+                $.each(item.children, function(i, o) {
+                    o && (o.name = o.name, o.value = o.id);
+                });
+            });
+            return res;
+        },
+        success: function(id, url, searchVal, result) {
+            // console.log(result);
+            //     //默认选中项
+            (utils.GetUrlpara('id') != null) && formSelects.value('authoritySelect', selectedArr);
+            // (utils.GetUrlpara('id') != null) && formSelects.value('authoritySelect', ['1/8']);
+        }
+    });
+
+    formSelects.on('authoritySelect', function(data) {
+        (utils.GetUrlpara('id') != null) && $('#authorityTips').fadeIn();
+    });
+
+    function addSubmit(data) {
+        //新增
+        data.field.basisList = tonewArr(layui.formSelects.value('authoritySelect', 'val'))
+        options(data.field, '/role/addRole');
+    }
+
+    function editSubmit(data) {
+        // utils._alert('此管理员若绑定该角色，当权限变更之后，须重新登录才能生效', function() {
+        //编辑
+        data.field.id = utils.GetUrlpara('id');
+        data.field.basisList = tonewArr(layui.formSelects.value('authoritySelect', 'val'))
+        options(data.field, '/role/editRole');
+        // });
+    }
+
+    function options(data, url) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + url,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Number(res.result == 100)) {
+                    utils._msg('操作成功', function() {
+                        parent.window.location.reload(true);
+                    })
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function tonewArr(arr) {
+        var newArr = [];
+        for (var i = 0; i < arr.length; i++) {
+            newArr.push({ basisid: arr[i].split('/')[1] });
+        }
+        return newArr;
+    }
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        // console.log(JSON.stringify(data.field));
+        utils.GetUrlpara('id') != null ? editSubmit(data) : addSubmit(data);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

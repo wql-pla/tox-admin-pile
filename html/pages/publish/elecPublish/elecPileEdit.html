@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>电桩详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_pileNum" class="layui-form-label">
+                                            电桩编号
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_pileNum" name="pileNum" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_stationName" class="layui-form-label">
+                                            所属桩站
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_stationName" name="stationName" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_firmName" class="layui-form-label">
+                                            所属供应商
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_firmName" name="firmName" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_storeName" class="layui-form-label">
+                                            所属公司门店
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_storeName" name="storeName" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_type" class="layui-form-label">
+                                            产品类型
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_type" name="" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_status" class="layui-form-label">
+                                            发布状态
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="status" lay-search="" lay-filter="status" required="" lay-verify="required" id="L_status">
+                                                <option value="">请输入或选择</option>
+                                                <option value="0">下线</option>
+                                                <option value="1">上线</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">充电信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_total" class="layui-form-label">
+                                            电桩状态
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_total" name="total" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_allCount" class="layui-form-label">
+                                            总耗电量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_allCount" name="allCount" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                        <label class="x-label">
+                                            度
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">起始时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="startDate" placeholder="yyyy-MM-dd" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">结束时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="endDate" placeholder="yyyy-MM-dd" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="x-center">
+                    <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.data.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var id = utils.GetUrlpara('id');
+    (id != null) && detail();
+
+
+    function detail(startDate = '', endDate = '') {
+        var data = {
+            id: id,
+            startDate: startDate,
+            endDate: endDate,
+        };
+        $.ajax({
+                async: false,
+                url: ajaxUrl + '/pile/pilePageDetail',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_pileNum').val(res.data.pileNum);
+                $('#L_stationName').val(res.data.station.stationName);
+                $('#L_firmName').val(res.data.firm.firmName);
+                $('#L_storeName').val(res.data.storeName);
+                $('#L_type').val(utils.productType(res.data.type));
+
+                $('#L_status').find('option[value="' + res.data.status + '"]').prop('selected', true);
+                form.render('select');
+
+                $('#L_total').val(utils.getJson('pileStatus', res.data.total));
+                $('#L_allCount').val(res.data.allCount);
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+
+    form.verify({
+        phone: [/^\d{11}$/, '手机必须11位，只能是数字！'],
+    });
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        // console.log(data.field);
+        editPile();
+        // 
+        return false;
+    });
+
+    //
+    //查询电桩信息
+    laydate.render({
+        elem: '#startDate',
+        done: function(value, date, endDate) {
+            utils._loading(function() {
+                detail(utils.checkDate(value), '');
+            }, '正在查询充电信息...');
+        }
+    });
+    laydate.render({
+        elem: '#endDate',
+        done: function(value, date, endDate) {
+            utils._loading(function() {
+                detail('', utils.checkDate(value));
+            }, '正在查询充电信息...');
+        }
+    });
+
+    //编辑
+    function editPile() {
+        var status = utils.isUndefined($('#L_status').next('.layui-form-select').find('.layui-this').attr('lay-value'));
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/pile/updateStats?id=' + id + "&status=" + status,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    utils._msg('操作成功', function() {
+                        parent.window.location.reload(true);
+                    })
+                } else {
+                    layer.alert(res.msg, {
+                        shift: 6 //shake
+                    });
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    </script>
+</body>
+
+</html>

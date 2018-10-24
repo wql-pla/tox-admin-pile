@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>电桩新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_pileNum" class="layui-form-label">
+                    <span class="x-red">*</span>电桩编号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_pileNum" name="pileNum" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_wxcode" class="layui-form-label">
+                    <span class="x-red">*</span>微信码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_wxcode" name="wxCode" required="" lay-verify="required" autocomplete="off" maxlength="11" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_station" class="layui-form-label">
+                    <span class="x-red">*</span>所属桩站
+                </label>
+                <div class="layui-input-inline">
+                    <select id="L_station" name="chargeStandardId" required="" lay-verify="required" lay-search=""></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_firm" class="layui-form-label">
+                    <span class="x-red">*</span>所属供应商
+                </label>
+                <div class="layui-input-inline">
+                    <select id="L_firm" name="firmId" required="" lay-verify="required" lay-search=""></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_type" class="layui-form-label">
+                    <span class="x-red">*</span>产品类型
+                </label>
+                <div class="layui-input-inline">
+                    <select id="L_type" name="type" required="" lay-verify="required" lay-search="">
+                        <option value="">请选择</option>
+                        <option value="3">交流单枪</option>
+                        <option value="4">交流双枪</option>
+                        <option value="5">直流单枪</option>
+                        <option value="6">直流双枪</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="date_Ext" class="layui-form-label">
+                    <span class="x-red">*</span>上线时间
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="date_Ext" name="date_Ext" class="layui-input" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    //日期时间选择器
+    laydate.render({
+        elem: '#date_Ext'
+    });
+    var pileid = utils.GetUrlpara('id');
+
+    //查看详情
+    pileid && detail();
+
+    function detail() {
+        $.ajax({
+                type: "get",
+                async: false,
+                url: ajaxUrl + '/pile/selectPileDetail?id=' + pileid,
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_pileNum').val(res.data.pileNum);
+                $('#L_wxcode').val(res.data.wxCode);
+                getFirm("#L_firm", res.data);
+                getStation("#L_station", res.data);
+                $('#L_type').find('option[value="' + res.data.type + '"]').prop('selected', true);
+                form.render('select');
+                $('#date_Ext').val(utils.formatDate(res.data.onlineDate, 1));
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function editPile(data) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/pile/editPileById',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    })
+                } else {
+                    layer.alert(res.msg, {
+                        shift: 6 //shake
+                    });
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function getStation(ele, list) {
+        $(ele).html('');
+        var str = "<option value='' selected='selected'>请选择</option>";
+        $.each(list.stations, function(i, o) {
+            if (o.stationName == list.stationName) {
+                str += "<option selected='selected' name=" + o.stationName + " value=" + o.id + ">" + o.stationName + "</option>";
+            } else {
+                str += "<option name=" + o.stationName + " value=" + o.id + ">" + o.stationName + "</option>";
+            }
+        })
+        $(ele).html(str);
+        form.render('select');
+    }
+
+    function getFirm(ele, list) {
+        $(ele).html('');
+        var str = "<option value='' selected='selected'>请选择</option>";
+        $.each(list.firms, function(i, o) {
+            if (o.firmName == list.firmName) {
+                str += "<option selected='selected' name=" + o.firmName + " value=" + o.id + ">" + o.firmName + "</option>";
+            } else {
+                str += "<option name=" + o.firmName + " value=" + o.id + ">" + o.firmName + "</option>";
+            }
+        })
+        $(ele).html(str);
+        form.render('select');
+    }
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        data.field.id = pileid;
+        // console.log(data.field);
+        editPile(data.field);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

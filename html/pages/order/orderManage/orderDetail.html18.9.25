@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_orderNum" class="layui-form-label">
+                                            订单号
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_orderNum" name="phone" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_pileNum" class="layui-form-label">
+                                            桩号
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_pileNum" name="openId" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            产品类型
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            电枪属性
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_createTime" class="layui-form-label">
+                                            开始时间
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_createTime" name="createTime" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_endTime" class="layui-form-label">
+                                            结束时间
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_endTime" name="endTime" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_store" class="layui-form-label">
+                                            所属公司门店
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_store" name="storeName" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_status" class="layui-form-label">
+                                            订单状态
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_status" name="status" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_useOpenid" class="layui-form-label">
+                                            消费微信号
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_useOpenid" name="useOpenid" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">付费信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_elecTotalAmount" class="layui-form-label">
+                                            预付金额
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_elecTotalAmount" name="elecTotalAmount" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_elecTotalCount" class="layui-form-label">
+                                            预充度数
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_elecTotalCount" name="elecTotalCount" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_needAmount" class="layui-form-label">
+                                            应付金额
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_needAmount" name="needAmount" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_couponDiscount" class="layui-form-label">
+                                            优惠抵扣<span class="x-red couponType"></span>
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_couponDiscount" name="couponDiscount" autocomplete="off" class="layui-input" value="0" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item isCharge">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_realAmount" class="layui-form-label">
+                                            实付金额
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_realAmount" name="realAmount" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_realCount" class="layui-form-label">
+                                            实充度数
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_realCount" name="realCount" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item isCharge">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_rechargeMoney" class="layui-form-label">
+                                            退回金额
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_rechargeMoney" name="rechargeMoney" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">用户信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_phone" class="layui-form-label">
+                                            电话
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_phone" name="phone" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_openid" class="layui-form-label">
+                                            OpenID
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_openid" name="openId" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">优惠券详情</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_couponName" class="layui-form-label">
+                                            优惠券名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_couponName" name="couponName" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">订单详情</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-even>
+                            <thead>
+                                <tr>
+                                    <td>序号</td>
+                                    <td>充电时间段</td>
+                                    <td>此时段电价（元/度）</td>
+                                    <td>充电时长（min）</td>
+                                    <td>此时段电费（元）</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var userid = utils.GetUrlpara('id');
+    (userid != null) && detail();
+
+    function detail() {
+        $.ajax({
+                type: 'POST',
+                async: true,
+                url: ajaxUrl + '/order/getOrderDetail?id=' + userid,
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                var list = res.detailist;
+                var ret = res.detail;
+                orderList(list);
+                Number(ret.status) == 1 ? $('.isCharge').hide() : $('.isCharge').show();
+                $('#L_orderNum').val(ret.id);
+                $('#L_pileNum').val(ret.pileNum);
+                $('#L_status').val(utils.getJson('chargeStatus', ret.status));
+                $('#L_useOpenid').val(ret.useOpenid);
+                $('#L_store').val(ret.storeName);
+                $('#L_createTime').val(ret.createTime);
+                $('#L_endTime').val(ret.endTime);
+
+                //付费信息
+                if (ret.coupon) {
+                    if (ret.coupon.status == 1) {
+                        // 直减1
+                        $('#L_needAmount').val(utils.fillZero(utils.fixedFloat(utils.fillZero(ret.realAmount), utils.fillZero(ret.coupon.amount), '+')));
+                        $('#L_couponDiscount').val(utils.fillZero(ret.coupon.amount));
+                    } else if (ret.coupon.status == 2) {
+                        //打折2
+                        var needPay = utils.fixedFloat(utils.fillZero(ret.realAmount), utils.fillZero(ret.coupon.amount), '/').toFixed(2);
+                        $('#L_needAmount').val(utils.fillZero(needPay));
+                        $('#L_couponDiscount').val(utils.fillZero(utils.fixedFloat(utils.fillZero(needPay), utils.fillZero(ret.realAmount), '-')));
+                    }
+                    $('.couponType').html('(' + utils.getJson('couponType', ret.coupon.status - 1) + ')');
+                } else {
+                    //暂无优惠券
+                    $('#L_needAmount').val(utils.fillZero(ret.realAmount));
+                    $('#L_couponDiscount').val("0");
+                }
+                $('#L_elecTotalAmount').val(utils.fillZero(ret.elecTotalAmount));
+                $('#L_elecTotalCount').val(utils.fillZero(ret.elecTotalCount));
+                $('#L_realAmount').val(utils.fillZero(ret.realAmount));
+                $('#L_realCount').val(utils.fillZero(ret.realCount));
+
+                //用户
+                if (ret.recharges[0] != undefined) {
+                    $('#L_rechargeMoney').val(utils.fillZero(ret.recharges[0].rechargeMoney));
+                } else {
+                    $('#L_rechargeMoney').val("0");
+                }
+                $('#L_phone').val(ret.phone);
+                $('#L_openid').val(ret.openId);
+
+                $('#L_couponName').val(ret.coupon && utils.isNull(ret.coupon.name));
+            })
+            .fail(function(err) {
+                console.log(err);
+            });
+    }
+
+    function orderList(data) {
+        if (data.length > 0) {
+            var s = "";
+            $.each(data, function(v, o) {
+                s += '<tr><td>' + (v + 1) + '</td>';
+                s += '<td>' + utils.isNull(utils.formatDate(o.fromDate, 2)) + '------' + utils.isNull(utils.formatDate(o.toDate, 2)) + '</td>';
+                s += '<td>' + utils.nullToString(o.price) + '</td>';
+                s += '<td>' + utils.nullToString(o.duration) + '</td>';
+                s += '<td>' + utils.nullToString(o.cost) + '</td></tr>';
+            });
+            $("#tbody").html(s);
+        } else {
+            $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+        }
+    }
+    </script>
+</body>
+
+</html>

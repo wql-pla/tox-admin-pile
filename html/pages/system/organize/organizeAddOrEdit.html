@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>组织机构信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_name" class="layui-form-label">
+                    <span class="x-red">*</span>组织机构名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_name" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" id="distpicker">
+                <label for="L_region" class="layui-form-label">
+                    <span class="x-red">*</span>地区
+                </label>
+                <div class="layui-input-inline">
+                    <select name="region" required="" lay-verify="required" lay-search="" lay-filter="region" id="L_region">
+                        <option value="">请选择</option>
+                        <option value="所有城市">所有城市</option>
+                        <option value="天津市市辖区">天津市</option>
+                        <option value="北京市市辖区">北京市</option>
+                        <option value="成都市">成都市</option>
+                        <option value="重庆市市辖区">重庆市</option>
+                    </select>
+                </div>
+                <!-- <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <select name="P1" lay-filter="province" lay-search="" id="L_province"></select>
+                    </div>
+                    <div class="layui-input-inline">
+                        lay-ignore
+                        <select name="C1" lay-filter="city" lay-search="" id="L_city"></select>
+                    </div>
+                </div> -->
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.data.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    // $('#distpicker').distpicker('reset', true);
+    // $('#distpicker').distpicker({
+    //     province: '天津市',
+    //     city: '天津市市辖区',
+    // });
+    (utils.GetUrlpara('id') != null) && detail();
+
+    function detail() {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/organization/selectOrganizationInfo',
+                data: JSON.stringify({ id: utils.GetUrlpara('id') }),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_name').val(res.data.name);
+                $('#L_region').find('option[value="' + res.data.region + '"]').prop('selected', true);
+                form.render('select');
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function addSubmit(data) {
+        //新增
+        // var addData = {
+        //     name: $('input[name=name]').val().trim(),
+        //     region: utils.isUndefined($('#L_region').next('.layui-form-select').find('.layui-this').text())
+        // }
+        options(data.field, '/organization/addOrganization');
+    }
+
+    function editSubmit(data) {
+        //编辑
+        // var editData = {
+        //     id: utils.GetUrlpara('id'),
+        //     name: $('input[name=name]').val().trim(),
+        //     region: utils.isUndefined($('#L_region').next('.layui-form-select').find('.layui-this').text())
+        // }
+        data.field.id = utils.GetUrlpara('id');
+        options(data.field, '/organization/editOrganization');
+    }
+
+    function options(data, url) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + url,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Number(res.result) == 100) {
+                    utils._msg(res.msg, function() {
+                        parent.window.location.reload(true);
+                    })
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        // console.log(JSON.stringify(data.field));
+        utils.GetUrlpara('id') != null ? editSubmit(data) : addSubmit(data);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

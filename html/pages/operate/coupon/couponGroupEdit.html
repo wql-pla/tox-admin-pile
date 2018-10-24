@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>优惠组合编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form x-so">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">基本信息</div>
+                        <div class="layui-card-body">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md12">
+                                    <div class="layui-inline">
+                                        <label for="L_name" class="layui-form-label w80">
+                                            优惠组合名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_name" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">优惠券列表</div>
+                        <div class="layui-card-body">
+                            <!-- <button class="layui-btn" onclick="utils._open('优惠券新增','./couponGroupChoose.html',100,100)"><i class="layui-icon">&#xe654;</i>新增</button> -->
+                            <table class="layui-table" lay-even>
+                                <thead>
+                                    <tr>
+                                        <!-- <td>
+                                            <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose">
+                                        </td> -->
+                                        <td>优惠券名称</td>
+                                        <td>领取时间</td>
+                                        <td>失效时间</td>
+                                        <td>数量</td>
+                                        <!-- <td>操作</td> -->
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody">
+                                    <td colspan="4">
+                                        加载中...
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="x-center">
+                        <!-- <button class="layui-btn" lay-filter="save" lay-submit="">保存</button> -->
+                        <!-- <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var id = utils.GetUrlpara('id');
+
+    var total = '';
+    (id != null) && detail();
+
+    function detail() {
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/coupons/selectGroupCouponsById?counponsFId=' + id,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                total = res.data.total;
+                var data = res.data.counponsZList;
+                $('#L_name').val(res.data.name);
+                var str = '';
+                //单次兑换
+                $.each(data, function(v, o) {
+                    // str += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                    str += '<tr><td>' + utils.isNull(o.coupon.name) + '</td>';
+                    str += '<td>' + utils.isNull(o.coupon.fromDate) + '</td>';
+                    str += '<td>' + utils.isNull(o.coupon.toDate) + '</td>';
+                    str += '<td>' + utils.fillZero(o.num) + '</td></tr>';
+                    // str += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'详情\',\'./couponGroupEdit.html?id=' + o.id + '\',100,100)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                });
+                if (data.length > 0) {
+                    $("#tbody").html(str);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+        // if (couponStr) {
+        //     var data = JSON.parse(couponStr);
+        //     if (data && data.length > 0) {
+        //         var s = "";
+        //         $.each(data, function(v, o) {
+        //             s += '<tr><td><input type="checkbox" name="checkout" lay-skin="primary" lay-filter="choose" data-num="' + utils.isNull(o.num) + '" value="' + o.couponId + '" /></td>';
+        //             s += '<td>' + utils.isNull(o.couponName) + '</td>';
+        //             s += '<td>' + utils.isNull(o.fromDate) + '</td>';
+        //             s += '<td>' + utils.isNull(o.toDate) + '</td>';
+        //             s += '<td class="couponNum">' + utils.isNull(o.num) + '</td>';
+        //             s += '<td class="noExl"><button type="button" class="layui-btn layui-btn-mini"  onclick="delateItem(' + v + ')"><i class="layui-icon">&#xe642;</i>删除</button></td></tr>';
+        //         });
+        //         $("#tbody").html(s);
+        //     } else {
+        //         $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+        //     }
+        //     //全选
+        //     utils.selectAll('allChoose', 'choose');
+        // }
+    }
+
+    // function delateItem(index) {
+    //     utils._confirm('确认删除', function() {
+    //         var couponArr = JSON.parse(window.localStorage.getItem('coupon'));
+    //         couponArr.splice(index, 1);
+    //         window.localStorage.setItem('coupon', JSON.stringify(couponArr));
+    //         utils._msg('', function() {
+    //             getList();
+    //         });
+    //     });
+    // }
+
+    // function addCouponGroup(data) {
+    //     $.ajax({
+    //             type: 'POST',
+    //             async: true,
+    //             url: ajaxUrl + '/coupons/insertGroupCoupons',
+    //             data: JSON.stringify(data),
+    //             dataType: 'json',
+    //             contentType: 'application/json',
+    //         })
+    //         .done(function(res) {
+    //             // console.log(res);
+    //             if (Number(res.result == 100)) {
+    //                 utils._msg('操作成功', function() {
+    //                     parent.window.location.reload(true);
+    //                 });
+    //             }
+    //         })
+    //         .fail(function(err) {
+    //             console.log(err);
+    //         });
+    // }
+
+    // form.on('submit(save)', function(data) {
+    //     //新增
+    //     var Arr = $('input[name="checkout"]:checked');
+    //     var ArrCheck = [];
+    //     for (var i = 0; i < Arr.length; i++) {
+    //         ArrCheck.push({
+    //             counponsId: Arr[i].value,
+    //             num: Arr[i].getAttribute('data-num')
+    //         });
+    //     }
+    //     if (!ArrCheck.length) {
+    //         utils._tips('请至少勾选一项！', 1000);
+    //     } else {
+    //         addCouponGroup({ name: data.field.name, data: ArrCheck });
+    //     }
+    //     return false;
+    // });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>修改IP</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>修改IP</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so">
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">电桩编号</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="pileNum" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">所属桩站</label>
+                                    <div class="layui-input-inline">
+                                        <select name="stationName" lay-search="" lay-filter="pile" id="pile"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">所属供应商</label>
+                                    <div class="layui-input-inline">
+                                        <select name="firmName" lay-search="" lay-filter="firm" id="firm"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">IP号</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="serverIp" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">修改状态</label>
+                                    <div class="layui-input-inline">
+                                        <select name="ipStatus" lay-search="" lay-filter="ipStatus" id="ipStatus">
+                                            <option value="">请输入或选择</option>
+                                            <option value="0">修改失败</option>
+                                            <option value="1">修改中</option>
+                                            <option value="2">修改成功</option>
+                                            <option value="3">初始IP</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <button type="button" title="搜索" lay-filter="search" lay-submit="" class="layui-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                                    <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>电桩列表</legend>
+            <div class="layui-field-box">
+                <div class="layui-form">
+                    <button class="layui-btn" onclick="modifyIp();"><i class="layui-icon">&#xe62f;</i>修改IP</button>
+                    <table class="layui-table" lay-even>
+                        <thead>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose">
+                                </td>
+                                <td>桩号</td>
+                                <td>所属桩站</td>
+                                <td>所属供应商</td>
+                                <td>IP</td>
+                                <td>端口号</td>
+                                <td>修改状态</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                    <div id="pageWrap"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    //获取默认选择的供应商信息
+    utils.selTemplate('#firm', 1, 2);
+    //获取桩站信息
+    utils.selTemplate('#pile', 2, 3);
+
+    var total = "";
+
+    function getList(data) {
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/pile/selectPiles',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                total = res.data.total;
+                var data = res.data.list;
+                var s = "";
+                $.each(data, function(v, o) {
+                    s += '<tr><td><input type="checkbox" name="checkout" lay-skin="primary" lay-filter="choose" data-isused="' + o.isUsed + '" data-update="' + o.updateStatus + '" value="' + o.pileNum + '" /></td>';
+                    s += '<td>' + utils.isNull(o.pileNum) + '</td>';
+                    s += '<td>' + utils.isNull(o.station.stationName) + '</td>';
+                    s += '<td>' + utils.isNull(o.firm.firmName) + '</td>';
+                    s += '<td>' + utils.isNull(o.serverIp) + '</td>';
+                    s += '<td>' + utils.isNull(o.serverPort) + '</td>';
+                    s += '<td>' + utils.ipStatus(o.ipStatus) + '</td></tr>';
+                });
+                if (data.length > 0) {
+                    $("#tbody").html(s);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+                //全选
+                utils.selectAll('allChoose', 'choose');
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+
+    function initList(pageSize) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            pileNum: $('input[name=pileNum]').val().trim(),
+            firmName: $('#firm').next('.layui-form-select').find('.layui-this').text(),
+            stationName: $('#pile').next('.layui-form-select').find('.layui-this').text(),
+            serverIp: $('input[name=serverIp]').val().trim(),
+            ipStatus: utils.isUndefined($('#ipStatus').next('.layui-form-select').find('.layui-this').attr('lay-value'))
+        }
+        getList(mydata);
+        utils.pages(total, getList, mydata);
+    }
+    //初始化
+    initList(10);
+
+    form.on('select(firm)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+    });
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+
+    function _modifyHtml() {
+        var _html = '';
+        _html += '<div class="layui-form">';
+        _html += '<div class="layui-form-item">';
+        _html += '<label class="x-label">';
+        _html += '<span class="x-red">*</span>服务器地址：';
+        _html += '</label>';
+        _html += '<input type="text" name="ip" class="layui-layer-input">';
+        _html += '</div>';
+        _html += '<div class="layui-form-item">';
+        _html += '<label class="x-label">';
+        _html += '<span class="x-red">*</span>端口号：';
+        _html += '</label>';
+        _html += '<input type="text" name="port" class="layui-layer-input">';
+        _html += '</div>';
+        _html += '</div>';
+        return _html;
+    }
+    //修改IP
+    function modifyIp() {
+        var ArrCheck = [];
+        var Arr = $('input[name="checkout"]:checked');
+        var firmName = $('#firm').next('.layui-form-select').find('.layui-this').text();
+        for (var i = 0; i < Arr.length; i++) {
+            ArrCheck.push(Arr[i].value);
+        }
+        var str = ArrCheck.join(',');
+        if (str == '') {
+            utils._tips('请至少勾选一项！', 1000);
+        } else {
+            layer.open({
+                type: 1, //Page层类型
+                //,area: ['500px', '300px']
+                btn: ["确定", "取消"],
+                title: '修改IP',
+                skin: 'layui-layer-prompt',
+                content: _modifyHtml(),
+                yes: function(index, layero) {
+                    //按钮【按钮一】的回调
+                    var ip = $(layero).find("input[name='ip']").val();
+                    var port = $(layero).find("input[name='port']").val();
+                    if (ip == '' || port == '') {
+                        utils._tips('输入不能为空！', 1000);
+                        return;
+                    } else {
+                        if (firmName.indexOf('循道') != -1) {
+                            // firmName.includes('循道')//true   es6语法
+                            tradeTypeCode = 2;
+                        } else if (firmName.indexOf('新亚东方') != -1) {
+                            tradeTypeCode = 1;
+                        }
+                        // 循道2  新亚1
+                        $.ajax({
+                            type: "get",
+                            url: ajaxUrl + "/pileUpdate/editPilesIp?pileNo=" + str + "&tradeTypeCode=" + tradeTypeCode + "&ip=" + ip + '&port=' + port,
+                            async: false,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function(res) {
+                                // console.log(res);
+                                layer.closeAll();
+                                if (Number(res.result) == 100) {
+                                    utils._msg('修改成功', function() {
+                                        parent.window.location.reload(true);
+                                    })
+                                } else {
+                                    utils._alert('操作失败')
+                                }
+                            },
+                            error: function(err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+    </script>
+</body>
+
+</html>

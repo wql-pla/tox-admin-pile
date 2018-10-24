@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>桩站详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row" id="distpicker">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_stationName" class="layui-form-label">
+                                            桩站名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_stationName" name="stationName" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_province" class="layui-form-label">
+                                            省份
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="province" lay-filter="province" lay-search="" required="" lay-verify="required" id="L_province"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_city" class="layui-form-label">
+                                            城市
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="city" lay-filter="city" lay-search="" required="" lay-verify="required" id="L_city"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_area" class="layui-form-label">
+                                            区域
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="region" lay-filter="area" lay-search="" required="" lay-verify="required" id="L_area"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_store" class="layui-form-label">
+                                            所属公司门店
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="storeId" lay-filter="storeName" lay-search="" required="" lay-verify="required" id="L_store"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_marker" class="layui-form-label">
+                                            桩站坐标
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_marker" name="coord" required="" lay-verify="required|point" autocomplete="off" class="layui-input" placeholder="选择坐标">
+                                        </div>
+                                        <a href="javascript:;" class="x-label" id="L_chooseMarker" title="选择坐标" onclick="chooseMarker();">
+                                            <i class="layui-icon">&#xe715;</i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_personName" class="layui-form-label">
+                                            联系人
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_personName" name="personName" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_personPhone" class="layui-form-label">
+                                            联系电话
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_personPhone" name="personPhone" autocomplete="off" required="" lay-verify="phone" maxlength="11" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_personType" class="layui-form-label">
+                                            类别
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="personType" lay-search="" lay-filter="personType" required="" lay-verify="required" id="L_personType">
+                                                <option value="">请输入或选择</option>
+                                                <option value="1">个人车位东</option>
+                                                <option value="2" selected>普通车位东</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">价格信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_basicChargeAmount" class="layui-form-label">
+                                            基础电费
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_basicChargeAmount" name="basicChargeAmount" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                        <label class="x-label">
+                                            元/度
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_serviceChargeAmount" class="layui-form-label">
+                                            服务费
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_serviceChargeAmount" name="serviceChargeAmount" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                        <label class="x-label">
+                                            元/度
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_totalAmount" class="layui-form-label">
+                                            共计
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_totalAmount" autocomplete="off" class="layui-input x-red" readonly>
+                                        </div>
+                                        <label class="x-label">
+                                            元/度
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_thirdServiceAmount" class="layui-form-label">
+                                            分润服务费
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_thirdServiceAmount" name="thirdServiceAmount" autocomplete="off" required="" lay-verify="required|percent" class="layui-input" placeholder="1~100的数字,最多保留两位小数">
+                                        </div>
+                                        <label class="x-label">
+                                            %
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6" id="L_personServiceAmountContainer">
+                                    <div class="layui-inline" id="L_personServiceAmountItem">
+                                        <label for="L_personServiceAmount" class="layui-form-label">
+                                            个人服务费
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_personServiceAmount" name="personServiceAmount" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                        <label class="x-label">
+                                            元/度
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">电桩信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_pileCount" class="layui-form-label">
+                                            已绑定电桩数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_pileCount" autocomplete="off" class="layui-input" disabled>
+                                        </div>
+                                        <label class="x-label">
+                                            个
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_ds" class="layui-form-label">
+                                            桩点电桩耗电量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_ds" autocomplete="off" class="layui-input" disabled>
+                                        </div>
+                                        <label class="x-label">
+                                            度
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">起始时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="startDate" placeholder="yyyy-MM-dd" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">结束时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="endDate" placeholder="yyyy-MM-dd" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card" id="L_planContainer">
+                    <div class="layui-card-header">桩站信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_DCNum" class="layui-form-label">
+                                            预计建设直流
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_DCNum" name="dcnum" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                        <label class="x-label">
+                                            根
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_ACNum" class="layui-form-label">
+                                            预计建设交流
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_ACNum" name="acnum" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                        <label class="x-label">
+                                            根
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_planUseTime" class="layui-form-label">
+                                            预计运营时间
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_planUseTime" name="planUseTime" autocomplete="off" required="" lay-verify="required" placeholder="yyyy-MM-dd" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="x-center">
+                    <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.data.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    laydate.render({
+        elem: '#L_planUseTime',
+    });
+    //个人桩东
+    var personServiceAmountItem = $('#L_personServiceAmountItem').detach();
+    var stationid = utils.GetUrlpara('id');
+    (stationid != null) && detail();
+
+    function detail(startDate = '', endDate = '') {
+        var data = {
+            id: stationid,
+            startDate: startDate,
+            endDate: endDate,
+        };
+        $.ajax({
+                async: false,
+                url: ajaxUrl + '/station/selectStationById',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+            })
+            .done(function(res) {
+                var ret = res.data.station;
+                // console.log(ret.coord);
+                $('#L_stationName').val(ret.stationName);
+                $('#distpicker').distpicker({
+                    province: ret.province,
+                    city: ret.city,
+                    district: ret.region
+                });
+                getStore("#L_store", res.data.stores, ret.storeId);
+
+                if (ret.coord == null || ret.coord == '') {
+                    $('#L_marker').val('');
+                } else {
+                    // console.log(ret.coord);
+                    $('#L_marker').val(ret.coord.split(',')[0] + "," + ret.coord.split(',')[1]);
+                }
+                // 
+                $('#L_personName').val(ret.personName);
+                $('#L_personPhone').val(ret.personPhone);
+                if (ret.personType !== null && ret.personType !== 'null' && Number(ret.personType) == 1) {
+                    //个人车位东1
+                    $('#L_personType').find('option[value="' + ret.personType + '"]').prop('selected', true);
+                    form.render('select');
+
+                    $('#L_personServiceAmountContainer').append(personServiceAmountItem);
+                    $('#L_personServiceAmount').val(ret.personServiceAmount);
+                }
+                $('#L_basicChargeAmount').val(ret.basicChargeAmount);
+                $('#L_serviceChargeAmount').val(ret.serviceChargeAmount);
+                $('#L_thirdServiceAmount').val(ret.thirdServiceAmount);
+
+                $('#L_totalAmount').val(Number(ret.basicChargeAmount * 1 + ret.serviceChargeAmount * 1).toFixed(2));
+
+                $('#L_pileCount').val(res.data.pileCount);
+                $('#L_ds').val(res.data.ds);
+
+                //建设中
+                if (Number(ret.status) != 2) {
+                    $('#L_planContainer').detach();
+                } else {
+                    $('#L_DCNum').val(ret.acnum);
+                    $('#L_ACNum').val(ret.dcnum);
+                    $('#L_planUseTime').val(utils.formatDate(ret.planUseTime, 1));
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    form.on('select(personType)', function(data) {
+        var value = data.value;
+        if (Number(value) == 1) {
+            //个人车位东1
+            $('#L_personServiceAmountContainer').append(personServiceAmountItem);
+        } else if (Number(value) == 2 || value == '') {
+            //普通车位东2
+            $('#L_personServiceAmountItem').detach();
+        }
+    })
+
+
+    $('#L_basicChargeAmount').on('input', function() {
+        count();
+    });
+    $('#L_serviceChargeAmount').on('input', function() {
+        count();
+    });
+
+
+    //
+    //查询电桩信息
+    laydate.render({
+        elem: '#startDate',
+        done: function(value, date, endDate) {
+            utils._loading(function() {
+                detail(utils.checkDate(value), '');
+            }, '正在查询电桩信息...');
+        }
+    });
+    laydate.render({
+        elem: '#endDate',
+        done: function(value, date, endDate) {
+            utils._loading(function() {
+                detail('', utils.checkDate(value));
+            }, '正在查询电桩信息...');
+        }
+    });
+
+    form.verify({
+        point: function(val) {
+            var flag = false;
+            if (val.indexOf(',') != -1) {
+                var arr = val.split(',');
+                if (arr.length == 2)
+                    for (var i = 0; i < arr.length; i++) {
+                        if (!/^-?\d+$|^(-?\d+)(\.\d+)?$/.test(arr[i])) flag = true;
+                    }
+                else
+                    flag = true;
+            } else {
+                flag = true;
+            }
+            if (flag) return '坐标格式采用 “经度,纬度” 格式，请检查格式是否正确且不能包含中文逗号';
+        },
+        phone: [/^\d{11}$/, '手机必须11位，只能是数字！'],
+        percent: [/^((\d|[1-9]\d|100)|(([1]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/, '请输入1~100的百分比，最多保留两位小数']
+    });
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        data.field.id = stationid;
+        editStation(data.field);
+        return false;
+    });
+
+    //编辑
+    function editStation(data) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/station/editStationById',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    utils._msg('操作成功', function() {
+                        parent.window.location.reload(true);
+                    })
+                } else {
+                    layer.alert(res.msg, {
+                        shift: 6 //shake
+                    });
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    //查看地图
+    function chooseMarker() {
+        var latlng = $('#L_marker').val();
+        var province = utils.isUndefined($('#L_province').next('.layui-form-select').find('.layui-this').attr('lay-value'));
+        var city = utils.isUndefined($('#L_city').next('.layui-form-select').find('.layui-this').attr('lay-value'));
+        utils._open('选择坐标', './map.html?latlng=' + latlng + '&province=' + utils.compileStr(province) + '&city=' + utils.compileStr(city), 100, 100);
+    }
+
+    function count() {
+        $('#L_totalAmount').val(Number($('#L_basicChargeAmount').val() * 1 + $('#L_serviceChargeAmount').val() * 1).toFixed(2));
+    }
+
+    function getStore(ele, data, selectedId) {
+        $(ele).html('');
+        var str = "<option value=''>请输入或选择</option>";
+        $.each(data, function(i, o) {
+            if (o.id == selectedId) {
+                str += "<option selected='selected' name=" + o.name + " value=" + o.id + ">" + o.name + "</option>";
+            } else {
+                str += "<option name=" + o.name + " value=" + o.id + ">" + o.name + "</option>";
+            }
+        })
+        $(ele).html(str);
+        form.render('select');
+    }
+    </script>
+</body>
+
+</html>

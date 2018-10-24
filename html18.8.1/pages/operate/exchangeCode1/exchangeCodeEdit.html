@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>兑换码编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            兑换码名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" autocomplete="off" required="" lay-verify="required" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            绑定优惠券
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" required="" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            兑换开始日期
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="startDate" name="" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            兑换结束日期
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="endDate" name="" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="" class="layui-form-label">
+                                            是否允许多人使用
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" required="" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6" id="L_allowContainer">
+                                    <div class="layui-inline" id="L_allow">
+                                        <label for="" class="layui-form-label">
+                                            允许兑换数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" autocomplete="off" required="" lay-verify="required" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" id="L_notAllow">
+                                        <label for="" class="layui-form-label">
+                                            生成数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="" name="" autocomplete="off" required="" lay-verify="required" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">兑换码兑换详情</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-even>
+                            <thead>
+                                <tr>
+                                    <td>序号</td>
+                                    <td>兑换码</td>
+                                    <td>兑换状态</td>
+                                    <td>兑换时间</td>
+                                    <td>兑换人</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <td colspan="5">
+                                    加载中...
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="x-center">
+                    <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.data.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    laydate.render({
+        elem: '#startDate',
+        type: 'datetime'
+    });
+    laydate.render({
+        elem: '#endDate',
+        type: 'datetime'
+    });
+    var allow = $('#L_allow').detach();
+    var notAllow = $('#L_notAllow').detach();
+    $('#L_allowContainer').html(allow);
+    //监听指定开关
+    form.on('switch(switch)', function(data) {
+        if (this.value == 1) {
+            //不允许
+            this.value = 0;
+            $('#L_allowContainer').html(notAllow);
+        } else {
+            //允许
+            this.value = 1;
+            $('#L_allowContainer').html(allow);
+        }
+    });
+
+    // form.on('select(personType)', function(data) {
+    //     var value = data.value;
+    //     if (value == 1) {
+    //         //个人车位东1
+    //         $('#L_personServiceAmountContainer').append(personServiceAmountItem);
+    //     } else if (value == 2 || value == '') {
+    //         //普通车位东2
+    //         $('#L_personServiceAmount').val('');
+    //         $('#L_personServiceAmountItem').detach();
+    //     }
+    // })
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        // console.log(data.field)
+        // editExchangeCode(data.field);
+        return false;
+    });
+
+
+    //新增
+    function editExchangeCode(data) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/station/insertStation',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (res.result == true || res.result == 'true') {
+                    utils._msg('操作成功', function() {
+                        parent.window.location.reload(true);
+                    })
+                } else {
+                    layer.alert(res.msg, {
+                        shift: 6 //shake
+                    });
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>兑换码详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">兑换码信息</div>
+                        <div class="layui-card-body">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_couponName" class="layui-form-label">
+                                            绑定的优惠券名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_couponName" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_name" class="layui-form-label">
+                                            活动名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_name" name="name" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-row">
+                                    <div class="layui-col-md6">
+                                        <div class="layui-inline">
+                                            <label for="L_fromDate" class="layui-form-label">
+                                                开始时间
+                                            </label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" id="L_fromDate" name="fromDate" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <div class="layui-inline">
+                                            <label for="L_toDate" class="layui-form-label">
+                                                结束时间
+                                            </label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" id="L_toDate" name="toDate" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_status" class="layui-form-label">
+                                            是否启用
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <!-- <select name="status" required="" lay-verify="required" lay-search="" lay-filter="status" id="L_status">
+                                                <option value="">请选择</option>
+                                                <option value="0">停用</option>
+                                                <option value="1">启用</option>
+                                            </select> -->
+                                            <input type="checkbox" name="status" lay-skin="switch" lay-filter="switch" required="" lay-verify="required" lay-text="启用|停用" id="L_status">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_isMore" class="layui-form-label">
+                                            是否允许多人使用
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_isMore" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_number" class="layui-form-label">
+                                            生成数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_number" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_allNum" class="layui-form-label">
+                                            已兑换数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_allNum" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">兑换码列表</div>
+                        <div class="layui-card-body">
+                            <button class="layui-btn" title="导出到EXCEL" onclick="table2excel()"><i class="layui-icon">&#xe601;</i>导出</button>
+                            <table class="layui-table" id="table" lay-even>
+                                <thead>
+                                    <tr>
+                                        <td>序号</td>
+                                        <td>兑换码</td>
+                                        <td>是否兑换</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody">
+                                    <td colspan="3">
+                                        加载中...
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="layui-form-item x-center">
+                        <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                        <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/table2excel/jquery.table2excel.min.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    laydate.render({
+        elem: '#L_fromDate',
+        type: 'datetime'
+    });
+    laydate.render({
+        elem: '#L_toDate',
+        type: 'datetime'
+    });
+    var id = utils.GetUrlpara('id');
+    (id != null) && detail();
+
+    function detail() {
+        $.ajax({
+                async: true,
+                url: ajaxUrl + '/activity/selectActivityById',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ id }),
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_couponName').val(res.data.couponName);
+                $('#L_name').val(res.data.name);
+                $('#L_fromDate').val(res.data.fromDate);
+                $('#L_toDate').val(res.data.toDate);
+                res.data.status == 1 ? $('#L_status').attr('checked', true) : $('#L_status').removeAttr('checked');
+                $('#L_isMore').val(Number(res.data.isMore) == 0 ? '不允许' : '允许');
+                $('#L_number').val(res.data.number);
+                $('#L_allNum').val(res.data.allNum);
+                form.render('checkbox');
+                getList(res.data.redeems);
+            })
+            .fail(function(err) {
+                console.log(err);
+            });
+    }
+
+    function getList(data) {
+        var s = "";
+        $.each(data, function(v, o) {
+            s += '<tr><td>' + (v + 1) + '</td>';
+            s += '<td>' + utils.isNull(o.code) + '</td>';
+            s += '<td>' + (o.isUse == 0 ? "未兑换" : "已兑换") + '</td></tr>';
+        });
+        if (data.length > 0) {
+            $("#tbody").html(s);
+        } else {
+            $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+        }
+
+    }
+
+    function editSubmit(data) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/activity/editActivity',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    })
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    //导出到excel
+    function table2excel() {
+        utils.toExcel("#table", '兑换码信息');
+    }
+
+    // form.on('switch', function(data) {
+    //     $(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 0);
+    // });
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        if (data.field.status == "on") {
+            data.field.status = "1";
+        } else {
+            data.field.status = "0";
+        }
+        data.field.id = id;
+        // console.log(data.field);
+        editSubmit(data.field);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

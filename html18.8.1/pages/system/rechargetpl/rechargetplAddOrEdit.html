@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>门店新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <label for="L_tplname" class="layui-form-label">
+                        <span class="x-red">*</span>模板名称
+                    </label>
+                    <div class="layui-inline">
+                        <label class="layui-form-label tpl-label"></label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_tplname" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row config">
+                <!-- <div class="layui-form-item">
+                    <label for="L_config1" class="layui-form-label">
+                        <span class="x-red">*</span>配置1
+                    </label>
+                    <div class="layui-inline">
+                        <label class="layui-form-label tpl-label">充</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_config1" name="payMoney1" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label tpl-label">送</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="giveMoney1" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <div class="layui-row x-center">
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-primary add-config"><i class="layui-icon"></i>添加配置(最多可添加4条)</button>
+                </div>
+            </div>
+            <div class="layui-row x-center">
+                <div class="layui-form-item">
+                    <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var num = 1;
+
+    utils.GetUrlpara('id') != null ? detail() : addInit();
+    //模板
+    function renderTpl(cnum, tplId, itemId, pay, give) {
+        var _html = '';
+        _html += '<div class="layui-form-item">';
+        _html += '<label for="L_config' + cnum + '" class="layui-form-label">';
+        _html += '<span class="x-red">*</span>配置' + cnum + '';
+        _html += '</label>';
+        _html += '<div class="layui-inline">';
+        _html += '<label class="layui-form-label tpl-label">充</label>';
+        _html += '<div class="layui-input-inline">';
+        _html += '<input type="text" id="L_config' + cnum + '" name="p' + cnum + '" value="' + (pay ? pay : "") + '" required="" lay-verify="required" autocomplete="off" class="layui-input">';
+        _html += '</div>';
+        _html += '</div>';
+        _html += '<div class="layui-inline">';
+        _html += '<label class="layui-form-label tpl-label">送</label>';
+        _html += '<div class="layui-input-inline">';
+        _html += '<input type="text" name="g' + cnum + '" value="' + (give ? give : "") + '" required="" lay-verify="required" autocomplete="off" class="layui-input">';
+        _html += '</div>';
+        _html += '</div>';
+        tplId && (_html += '<input type="hidden" name="tplid" value="' + tplId + '" autocomplete="off">');
+        itemId && (_html += '<input type="hidden" name="itemid' + cnum + '" value="' + itemId + '" autocomplete="off">');
+        _html += '</div>';
+        return _html;
+    }
+
+    //详情    
+    function detail() {
+        $.ajax({
+                type: "get",
+                async: true,
+                url: ajaxUrl + '/payTemplate/getPayTemplateById?id=' + utils.GetUrlpara('id'),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                num = res.data.subs.length;
+                $('#L_tplname').val(res.data.name);
+                $.each(res.data.subs, function(v, o) {
+                    $(".config").append(renderTpl(v + 1, res.data.id, o.id, utils.isNull(o.payMoney), utils.isNull(o.giveMoney)));
+                });
+                //移除新增添加配置按钮
+                $('.add-config').remove();
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function addInit() {
+        //新增中的添加配置操作
+        $('.config').append(renderTpl(num));
+        $('.add-config').on('click', function() {
+            num++;
+            if (num <= 4) {
+                $('.config').append(renderTpl(num, 1));
+            } else {
+                num = 4;
+                layer.msg('配置最多可添加4条！', { time: 1500, shift: 6 }, function() {});
+            }
+        });
+    }
+
+    function addSubmit(data) {
+        //新增
+        var arr = [];
+        for (var i = 1; i < num + 1; i++) {
+            arr.push({ payMoney: data.field['p' + i], giveMoney: data.field['g' + i] })
+        }
+        var addData = {
+            name: data.field.name,
+            subs: arr
+        }
+        options(addData, '/payTemplate/createPayTemplate');
+    }
+
+    function editSubmit(data) {
+        //编辑
+        var arr = [];
+        for (var i = 1; i < num + 1; i++) {
+            arr.push({ id: data.field['itemid' + i], payMoney: data.field['p' + i], giveMoney: data.field['g' + i] })
+        }
+        var editData = {
+            id: data.field.tplid,
+            name: data.field.name,
+            subs: arr
+        }
+        options(editData, '/payTemplate/editPayTemplate');
+    }
+
+    function options(data, url) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + url,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (res.result == "success") {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    })
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        utils.GetUrlpara('id') != null ? editSubmit(data) : addSubmit(data);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

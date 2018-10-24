@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>会员详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form x-so">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label for="L_phone" class="layui-form-label w80">
+                                            手机号
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_phone" name="phone" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label for="L_openid" class="layui-form-label w80">
+                                            OpenID
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_openid" name="openId" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label for="L_couponnum" class="layui-form-label w80">
+                                            有效优惠券数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_couponnum" name="couponNum" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label for="L_createdate" class="layui-form-label w80">
+                                            注册时间
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_createdate" name="createDate" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label for="L_balance" class="layui-form-label w80">
+                                            账户余额
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_balance" name="balance" autocomplete="off" class="layui-input" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">已领取优惠券</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-even>
+                            <thead>
+                                <tr>
+                                    <td>序号</td>
+                                    <td>优惠券</td>
+                                    <td>开始时间</td>
+                                    <td>结束时间</td>
+                                    <td>使用时间</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <td colspan="5">
+                                    加载中...
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="x-center">
+                    <button class="layui-btn" onclick="returnMoney();">退款</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var userid = utils.GetUrlpara('id');
+    var balance = '';
+    (userid != null) && detail();
+
+    function detail() {
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                    type: 'POST',
+                    async: true,
+                    url: ajaxUrl + '/user/userDetail?id=' + userid,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                })
+                .done(function(res) {
+                    // console.log(res);
+                    balance = utils.fixedFloat(utils.fillZero(res.data.balance), utils.fillZero(res.data.giveMoney), '+');
+                    $('#L_phone').val(res.data.phone);
+                    $('#L_openid').val(res.data.openId);
+                    $('#L_couponnum').val(res.data.couponsCount);
+                    $('#L_createdate').val(res.data.createDate);
+                    $('#L_balance').val(balance);
+                    resolve(userid);
+                })
+                .fail(function(err) {
+                    // console.log(err);
+                    reject(err);
+                });
+        });
+    }
+    detail().then(function(value) {
+        $.ajax({
+            type: "POST",
+            async: true,
+            url: ajaxUrl + '/user/CouponsById?userId=' + value,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                var data = res.data;
+                var s = "";
+                $.each(data, function(v, o) {
+                    s += '<tr><td>' + (v + 1) + '</td>';
+                    s += '<td>' + utils.isNull(o.name) + '</td>';
+                    s += '<td>' + utils.formatDate(o.startDate, 2) + '</td>';
+                    s += '<td>' + utils.formatDate(o.endDate, 2) + '</td>';
+                    s += '<td>' + utils.formatDate(o.useDate, 2) + '</td></tr>';
+                });
+                if (data.length > 0) {
+                    $("#tbody").html(s);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }).catch(function(error) {
+        alert('接口报错，请联系管理员！！！');
+        console.error(error);
+    })
+
+    function returnMoney() {
+        if (balance > 0) {
+            utils._confirm('确认退款？', function() {
+                $.ajax({
+                        async: false,
+                        url: ajaxUrl + '/user/returnMoney?id=' + userid,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ id: userid }),
+                    })
+                    .done(function(res) {
+                        // console.log(res);
+                        if (Number(res.result) == 100) {
+                            utils._msg(res.msg, function() {
+                                window.location.reload(true);
+                            })
+                        }
+                    })
+                    .fail(function(err) {
+                        console.log(err);
+                    });
+            });
+        } else {
+            utils._tips('账户余额不足', 2000);
+        }
+    }
+    </script>
+</body>
+
+</html>

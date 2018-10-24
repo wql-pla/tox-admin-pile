@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>选择坐标</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="../../../css/xadmin.css">
+    <style>
+    html,
+    body {
+        /*很重要！！！*/
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+        -webkit-transition: all 0.5s ease-in-out;
+        transition: all 0.5s ease-in-out;
+    }
+
+    #suggestInput {
+        position: absolute;
+        top: 5px;
+        left: 70px;
+        line-height: 40px;
+        background: #fff;
+        box-shadow: 0 0 10px #aaa;
+        padding: 0 10px;
+        border-radius: 5px;
+    }
+
+    #suggestId {
+        border: none;
+        outline: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    #button-area {
+        position: fixed;
+        bottom: 20px;
+        right: 10px;
+    }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=Q3azqy4r9nwxsxvlZ7aOeeE3ewHKv1cu"></script>
+    <!--加载鼠标绘制工具-->
+    <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+    <!--加载检索信息窗口-->
+    <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="suggestInput">
+        <input type="text" id="suggestId" size="30" value="" />
+    </div>
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <div class="layui-inline" id="button-area">
+                <input type="hidden" required="" lay-verify="coord" value="" name="coord" id="L_coord">
+                <button type="button" title="保存" class="layui-btn" lay-filter="save" lay-submit="" id="L_submitCoord"><i class="layui-icon">&#xe609;</i>保存</button>
+                <button type="button" id="L_reset" title="重置" class="layui-btn layui-btn-danger"><i class="layui-icon">&#xe631;</i>重置</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script>
+    var mylatLng = utils.GetUrlpara('latlng');
+    var myprovince = utils.uncompileStr(utils.GetUrlpara('province'));
+    var mycity = utils.uncompileStr(utils.GetUrlpara('city'));
+
+
+    var overlays = []; //地图覆盖物
+
+    var map = new BMap.Map('map', {
+        enableHighResolution: true, //是否开启高清
+    });
+
+    var point = new BMap.Point(116.331398, 39.897445);
+    var navigationControl = new BMap.NavigationControl({
+        // 靠左上角位置
+        anchor: BMAP_ANCHOR_TOP_LEFT,
+        // LARGE类型
+        type: BMAP_NAVIGATION_CONTROL_LARGE,
+        // 启用显示定位
+        enableGeolocation: true
+    });
+    map.enableScrollWheelZoom(); //启用鼠标滚动对地图放大缩小
+    map.centerAndZoom(point, 12); //设置经纬度
+    map.addControl(navigationControl); // 添加带有定位的导航控件
+
+
+
+    if (mylatLng !== '') {
+        var p = new BMap.Point(mylatLng.split(',')[0], mylatLng.split(',')[1]);
+        doMarker(p, mylatLng);
+        doCircle(p);
+    } else if (mylatLng === '' && mycity !== '') {
+        //新增
+        /**
+         * 地址解析，初始化对应的城市地图
+         */
+        map.setCenter(mycity);
+        //
+    } else {
+        /*
+        当前城市定位
+        */
+        var myCity = new BMap.LocalCity();
+        myCity.get(function(result) {
+            var cityName = result.name;
+            map.setCenter(cityName);
+        });
+    }
+
+
+    /*
+        实例化鼠标绘制工具
+     */
+    var drawingManager = new BMapLib.DrawingManager(map, {
+        isOpen: false, //是否开启绘制模式
+        enableDrawingTool: true, //是否显示工具栏
+        enableCalculate: false,
+        drawingToolOptions: {
+            anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+            offset: new BMap.Size(5, 5), //偏离值
+            scale: 0.8,
+            drawingModes: [BMAP_DRAWING_MARKER],
+            drawingTypes: [
+                BMAP_DRAWING_MARKER,
+            ]
+        },
+    });
+    /*
+        描点
+     */
+    drawingManager.addEventListener('overlaycomplete', function(event) {
+        //清除之前的marker
+        clearMapOverlays();
+        //添加至覆盖物栈
+        overlays.push(event.overlay);
+        if (event.drawingMode == BMAP_DRAWING_MARKER) {
+            // console.log(event.overlay.getTitle());
+            // console.log(event.overlay.getPosition());
+            document.getElementById('L_coord').value = event.overlay.getPosition().lng + ',' + event.overlay.getPosition().lat;
+        }
+    });
+
+    /*
+        下拉搜索
+     */
+    var autocomplete = new BMap.Autocomplete( //建立一个自动完成的对象
+        {
+            "input": "suggestId",
+            "location": myprovince
+            // "location": '天津'
+        });
+
+    autocomplete.addEventListener("onconfirm", function(e) { //鼠标点击下拉列表后的事件
+        var _value = e.item.value;
+        var sValue = _value.province + _value.city + _value.district + _value.street + _value.business;
+        setPlace(sValue);
+    });
+
+
+    /*
+        根据搜索结果显示marker
+     */
+    function setPlace(val) {
+        clearMapOverlays();
+        var local = new BMap.LocalSearch(map, { //智能搜索
+            onSearchComplete: function(event) {
+                drawingManager.close(); //关闭地图的绘制状态
+                if (event.getPoi(0)) {
+                    var pp = event.getPoi(0).point; //获取第一个智能搜索的结果
+                    var title = event.getPoi(0).title;
+                    //描点
+                    doMarker(pp, title);
+                } else {
+                    utils._alert('定位失败，请确认地址是否正确');
+                }
+            }
+        });
+        local.search(val); //根据检索词发起检索
+    }
+
+    /*
+        创建一个Marker
+     */
+    function doMarker(mPoint, title) {
+        //这里的mPoint为百度的实例对象
+        var marker = new BMap.Marker(mPoint, {
+            title: title,
+            // offset: new BMap.Size(20, -10),//标注的位置偏移值
+            // icon: new BMap.Icon("../icon5.png", new BMap.Size(40, 49)), //标注所用的图标对象
+        });
+        map.addOverlay(marker);
+        marker.setAnimation(BMAP_ANIMATION_DROP);
+        // map.setCenter(mPoint);
+        map.centerAndZoom(mPoint, 15);
+        //须在addOverlay之后调用该动画，不然只会执行一次！！
+        getMapOverlays();
+        doCircle(mPoint);
+        document.getElementById('L_coord').value = mPoint.lng + ',' + mPoint.lat;
+    }
+    /*
+        创建一个Marker
+     */
+    function doCircle(mPoint) {
+        var circle = new BMap.Circle(mPoint, 1000, {
+            fillColor: "blue",
+            strokeWeight: 1,
+            fillOpacity: 0.3,
+            strokeOpacity: 0.3
+        });
+        map.addOverlay(circle);
+        getMapOverlays();
+    }
+
+    /*
+        获取地图覆盖物
+     */
+    function getMapOverlays() {
+        var arr = map.getOverlays(); //获取地图覆盖物
+        for (var i = 0; i < arr.length; i++) {
+            overlays.push(arr[i]);
+        }
+    }
+
+    /*
+        清除地图覆盖物
+     */
+    function clearMapOverlays() {
+        if (overlays) {
+            for (i in overlays) {
+                map.removeOverlay(overlays[i]);
+                document.getElementById('L_coord').value = '';
+            }
+        }
+    }
+
+    //重置
+    document.getElementById('L_reset').onclick = function() {
+        clearMapOverlays();
+        if (document.getElementById('suggestId').value) {
+            document.getElementById('suggestId').value = '';
+        }
+    }
+
+    form.verify({
+        coord: function(value) {
+            if (value == '') {
+                return '请先选择坐标！';
+            }
+        }
+    });
+
+    form.on('submit(save)', function(data) {
+        // console.log(data.field.coord);
+        data && parent.$("#L_marker").val(data.field.coord), utils._close();
+        return false;
+    });
+    </script>
+</body>
+
+</html>

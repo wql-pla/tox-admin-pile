@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>优惠券管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>优惠券信息</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so" id="L_searchForm">
+                        <!-- <div class="layui-col-md12" id="L_couponSearch">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">优惠名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="name" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">起始时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="fromDate" class="layui-input" id="startDate" placeholder="yyyy-MM-dd HH:mm:ss">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">结束时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="toDate" class="layui-input" id="endDate" placeholder="yyyy-MM-dd HH:mm:ss">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md12">
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">优惠类型</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <button type="button" title="搜索" lay-filter="search" lay-submit="" class="layui-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                                        <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="layui-col-md12" id="L_couponGroupSearch">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">优惠名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="name" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-inline">
+                                        <button type="button" title="搜索" lay-filter="search" lay-submit="" class="layui-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                                        <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>优惠券列表</legend>
+            <div class="layui-field-box">
+                <button class="layui-btn" onclick="addOpen();"><i class="layui-icon">&#xe654;</i><span class="addName">新增优惠券</span></button>
+                <div class="layui-tab layui-tab-brief" lay-filter="tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">优惠券</li>
+                        <li>优惠组合</li>
+                    </ul>
+                </div>
+                <div class="layui-form">
+                    <table class="layui-table" lay-even>
+                        <thead id="thead">
+                            <tr id="L_couponHeader">
+                                <td>序号</td>
+                                <td>优惠名称</td>
+                                <td>优惠类型</td>
+                                <td>优惠金额</td>
+                                <td>开始日期</td>
+                                <td>结束日期</td>
+                                <td>操作</td>
+                            </tr>
+                            <tr id="L_couponGroupHeader">
+                                <td>序号</td>
+                                <td>优惠名称</td>
+                                <td>优惠券数量</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                    <div id="pageWrap"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    //日期时间选择器
+    utils.start2endDate('#startDate', '#endDate');
+    
+    var total = "";
+    var tabIndex = 0; //默认优惠券
+
+    /*
+       搜索框
+     */
+    // var couponSearch = $("#L_couponSearch").detach();
+    // var couponGroupSearch = $("#L_couponGroupSearch").detach();
+    /**
+     * 表头
+     */
+    //优惠券
+    var couponHeader = $("#L_couponHeader").detach();
+    //优惠组合
+    var couponGroupHeader = $("#L_couponGroupHeader").detach();
+
+    //tab切换
+    $('.layui-tab-title li').click(function() {
+        tabIndex = $(this).index();
+        if (tabIndex == 0) {
+            $('.addName').text('新增优惠券');
+        } else if (tabIndex == 1) {
+            $('.addName').text('新增优惠组合');
+        }
+        utils._loading(function() {
+            initList(10);
+        });
+    });
+
+    function baseAjax(arg) {
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + arg.url,
+            data: JSON.stringify(arg.data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                arg.success && arg.success(res);
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function addOpen() {
+        var addTitle = $('.addName').text();
+        if (tabIndex == 0) {
+            //优惠券
+            utils._open(addTitle, './couponAddOrEdit.html', 100, 100);
+        } else if (tabIndex == 1) {
+            //优惠组合
+            utils._open(addTitle, './couponGroupAdd.html', 100, 100);
+        }
+    }
+
+    function loadThead(val) {
+        if (val == 0) {
+            $("#thead").html(couponHeader);
+            // $("#L_searchForm").html(couponSearch);
+        } else if (val == 1) {
+            $("#thead").html(couponGroupHeader);
+            // $("#L_searchForm").html(couponGroupSearch);
+        }
+    }
+
+    function loadTbody(data) {
+        var pageNum = data.pageNum,
+            pageSize = data.pageSize;
+        if (tabIndex == 0) {
+            //优惠券
+            baseAjax({
+                url: '/coupons/selectCoupons',
+                data,
+                success: function(res) {
+                    // console.log(res);
+                    total = res.data.total;
+                    var ret = res.data.list;
+                    if (ret.length > 0) {
+                        var tbody = '';
+                        $.each(ret, function(v, o) {
+                            tbody += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                            tbody += '<td><i class="layui-icon">&#xe642;</i><a href="javascript:void(0);" title="查看详情" onclick="utils._open(\'优惠券详情\',\'./couponAddOrEdit.html?id=' + o.id + '\',100,100)">' + utils.isNull(o.name) + '</a></td>';
+                            tbody += '<td>' + utils.getJson("couponType", o.status - 1) + '</td>';
+                            tbody += '<td>' + utils.fillZero(o.amount) + '</td>';
+                            tbody += '<td>' + utils.nullToString(o.fromDate) + '</td>';
+                            tbody += '<td>' + utils.nullToString(o.toDate) + '</td>';
+                            tbody += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'优惠券发布\',\'./couponPublish.html?id=' + o.id + '\',100,100)"><i class="layui-icon">&#xe609;</i>发布</button></td></tr>';
+                            // tbody += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'详情\',\'./exchangeCodeEdit.html?id=' + o.id + '\',100,100)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                            // 
+                        });
+                        $("#tbody").html(tbody);
+                    } else {
+                        $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                    }
+                }
+            })
+        } else if (tabIndex == 1) {
+            // 优惠组合
+            baseAjax({
+                url: '/coupons/selectGroupCoupons',
+                data,
+                success: function(res) {
+                    // console.log(res);
+                    total = res.data.total;
+                    var ret = res.data.list;
+                    if (ret.length > 0) {
+                        var tbody = '';
+                        $.each(ret, function(v, o) {
+                            tbody += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                            tbody += '<td>' + utils.isNull(o.name) + '</td>';
+                            tbody += '<td>' + utils.fillZero(o.num) + '</td>';
+                            tbody += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'优惠组合详情\',\'./couponGroupEdit.html?id=' + o.id + '\',100,100)"><i class="layui-icon">&#xe642;</i>查看</button><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'优惠组合发布\',\'./couponGroupPublish.html?id=' + o.id + '\',100,100)"><i class="layui-icon">&#xe609;</i>发布</button></td></tr>';
+                        });
+                        $("#tbody").html(tbody);
+                    } else {
+                        $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                    }
+                }
+            })
+        }
+    }
+
+
+    function initList(pageSize) {
+        // if (tabIndex == 0) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            name: $('input[name=name]').val().trim(),
+        }
+        loadThead(tabIndex);
+        loadTbody(mydata);
+        utils.pages(total, loadTbody, mydata);
+        // } else if (tabIndex == 1) {
+        //     var mydata = {
+        //         pageNum: 0,
+        //         pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+        //         name: $('input[name=name]').val().trim(),
+        //     }
+        //     loadThead(tabIndex);
+        //     loadTbody(mydata);
+        //     utils.pages(total, loadTbody, mydata);
+        // }
+    }
+    //初始化
+    initList(10);
+
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+    </script>
+</body>
+
+</html>

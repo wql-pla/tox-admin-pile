@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>导入</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <form id="form" method="post" enctype="multipart/form-data" class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="L_file" class="layui-form-label">
+                        电桩信息
+                    </label>
+                    <div class="layui-input-inline">
+                        <button type="button" class="layui-btn layui-btn-normal docName" onclick="var o=document.getElementById('L_file');o.click();"><i class="layui-icon">&#xe654;</i>请选择上传文件</button>
+                        <input type="file" id="L_file" name="myfile" required="" lay-verify="file" autocomplete="off" hidden>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label"></label>
+                    <a href="../../../excel/template.xlsx" class="layui-btn layui-btn-primary layui-btn-small" title="下载模板"><i class="layui-icon">&#xe601;</i>下载模板</a>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label"></label>
+                    <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                    <button type="button" class="layui-btn" lay-filter="save" lay-submit=""><i class="layui-icon">&#xe681;</i>上传</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    function uploadFile() {
+        var formData = new FormData($("#form")[0]);
+        layer.msg('上传中...', {
+            icon: 16,
+            shade: 0.6,
+            // time: 1000
+        }, function() {
+            $.ajax({
+                    type: 'post',
+                    url: ajaxUrl + '/pile/readExcel',
+                    data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                })
+                .done(function(res) {
+                    // console.log(res);
+                    if (Number(res.result) == 100) {
+                        utils._msg('上传成功', function() {
+                            parent.window.location.reload(true);
+                        })
+                    } else {
+                        alert('上传失败');
+                    }
+                })
+                .fail(function(err) {
+                    console.log(err);
+                })
+        });
+    }
+    $('#L_file').on('change', function() {
+        $('.docName').html($(this)[0].files[0].name);
+    });
+    $('button[type="reset"]').on('click', function() {
+        $('.docName').html('<i class="layui-icon">&#xe654;</i>请选择上传文件');
+    })
+    //自定义验证规则
+    form.verify({
+        file: function(value) {
+            if ($('#L_file').val() == '') {
+                return '请先选择文件';
+            }
+        }
+    });
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        //编辑
+        data && uploadFile();
+        return false;
+    });
+    </script>
+</body>
+
+</html>

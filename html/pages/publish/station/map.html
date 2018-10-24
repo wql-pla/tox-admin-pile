@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>选择坐标</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="../../../css/map.css">
+    <link rel="stylesheet" type="text/css" href="../../../css/font.css">
+    <link rel="stylesheet" type="text/css" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div id="container"></div>
+    <div class="search">
+        <input type="text" id="place" />
+    </div>
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <input type="hidden" required="" lay-verify="coord" value="" name="coord" id="L_coord">
+            <button type="button" lay-filter="search" lay-submit="" class="layui-btn" id="L_submitCoord">保存</button>
+        </div>
+    </div>
+    <script type="text/javascript" src="http://map.qq.com/api/js?v=2.exp&libraries=place,drawing"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    var mylatLng = utils.GetUrlpara('latlng');
+    var myprovince = utils.uncompileStr(utils.GetUrlpara('province'));
+    var mycity = utils.uncompileStr(utils.GetUrlpara('city'));
+
+    // console.log(typeof mylatLng)
+    // console.log(mylatLng)
+
+    // console.log(typeof myprovince)
+    // console.log(myprovince)
+
+    // console.log(typeof mycity)
+    // console.log(mycity)
+
+    var map, geocoder;
+    var overlaysArray = []; //覆盖物容器,用于清除覆盖物
+    var radius = 500;
+
+    map = new qq.maps.Map(document.getElementById("container"), {
+        center: new qq.maps.LatLng(30.659922, 104.065631),
+        zoom: 12,
+        // disableDefaultUI: true //禁止所有控件
+        // zoomControl: true,
+        mapTypeControl: false
+    });
+
+
+
+    if ((mylatLng && mylatLng !== '') && (mycity && mycity !== '')) {
+        //详情，查看坐标，戳点
+        var latlngBounds = new qq.maps.LatLngBounds();
+        var points = new qq.maps.LatLng(mylatLng.split(',')[1], mylatLng.split(',')[0]);
+        latlngBounds.extend(points);
+        doMarker(points, mylatLng);
+        doCircle(points);
+        map.fitBounds(latlngBounds);
+        // console.log('编辑')
+    } else if (mylatLng === '' && mycity !== '') {
+        //新增
+        /**
+         * 地址解析，初始化对应的城市地图
+         */
+        geocoder = new qq.maps.Geocoder({
+            complete: function(result) {
+                map.setCenter(result.detail.location);
+                doMarker(result.detail.location, result.detail.address + result.detail.location);
+            }
+        });
+        geocoder.getLocation(mycity);
+        // console.log('新增')
+        //
+    } else if (mylatLng === '' && myprovince === '' && mycity === '') {
+        /**
+         * 根据用户IP查询城市信息。
+         */
+        // 获取城市列表接口设置中心点
+        var citylocation = new qq.maps.CityService({
+            complete: function(result) {
+                map.setCenter(result.detail.latLng);
+            }
+        });
+        //调用searchLocalCity();方法    
+        citylocation.searchLocalCity();
+        console.log('暂无坐标')
+    }
+
+    /**
+     * 关键字搜索
+     */
+    //调用Poi检索类。用于进行本地检索、周边检索等服务。
+    var ap = new qq.maps.place.Autocomplete(document.getElementById('place'), {
+        // location: '天津市' //下拉框显示本地搜索结果
+        location: myprovince //下拉框显示本地搜索结果
+    });
+    var latlngBounds = new qq.maps.LatLngBounds();
+    var searchService = new qq.maps.SearchService({
+        // location: '天津',
+        location: myprovince,
+        complete: function(res) {
+            //清空所有覆盖物
+            clearOverlays(overlaysArray);
+
+            var pois = res.detail.pois;
+            if (pois) {
+                var poi = pois[0];
+                latlngBounds.extend(poi.latLng);
+                doMarker(poi.latLng, poi.address + poi.latLng);
+                // doCircle(poi.latLng);
+                map.fitBounds(latlngBounds);
+            } else {
+                utils._alert('定位失败，请确认地址是否正确');
+            }
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
+
+    //添加监听事件
+    qq.maps.event.addListener(ap, "confirm", function(res) {
+        // console.log(res);
+        searchService.search(res.value);
+    });
+
+    /**
+     * 自定义绘图工具
+     */
+
+    //清除所有
+    var clearAll = document.createElement("div");
+    clearAll.className = 'clearAll';
+    clearAll.innerHTML = "清除所有";
+    clearAll.title = "清除所有";
+    //拖动
+    var pointerControl = document.createElement("div");
+    pointerControl.className = 'controlStyle pointer-active';
+    pointerControl.index = 0;
+    pointerControl.title = "拖动";
+    //点
+    var markerControl = document.createElement("div");
+    markerControl.className = 'controlStyle marker';
+    markerControl.index = 1;
+    markerControl.title = "选点";
+
+    //前面只要设置了index，插入顺序就可以是乱序的了
+    map.controls[qq.maps.ControlPosition.TOP_RIGHT].push(clearAll);
+    map.controls[qq.maps.ControlPosition.TOP_RIGHT].push(pointerControl);
+    map.controls[qq.maps.ControlPosition.TOP_RIGHT].push(markerControl);
+
+
+    var drawingManager = new qq.maps.drawing.DrawingManager({
+        drawingMode: null,
+        drawingControl: false,
+        markerOptions: {
+            visible: false
+        },
+        circleOptions: {
+            fillColor: new qq.maps.Color(255, 208, 70, 0.3),
+            strokeColor: new qq.maps.Color(88, 88, 88, 1),
+            strokeWeight: 3,
+            clickable: false
+        }
+    });
+    drawingManager.setMap(map);
+
+    //清除所有
+    qq.maps.event.addListener(clearAll, 'click', function(event) {
+        // console.log('清除所有');
+        if (document.getElementById('place').value) {
+            document.getElementById('place').value = '';
+        }
+        clearOverlays(overlaysArray);
+    });
+    //拖动
+    qq.maps.event.addListener(pointerControl, 'click', function(event) {
+        markerControl.className = 'controlStyle marker';
+        pointerControl.className = 'controlStyle pointer-active';
+        // console.log('拖动');
+        // 清除绘制模式
+        drawingManager.setDrawingMode(null);
+    });
+    //点
+    qq.maps.event.addListener(markerControl, 'click', function() {
+        pointerControl.className = 'controlStyle pointer';
+        markerControl.className = 'controlStyle marker-active';
+        // console.log('选点');
+        drawingManager.setDrawingMode(qq.maps.drawing.OverlayType.MARKER);
+    });
+    qq.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+        if (event.type == "marker") {
+            clearOverlays(overlaysArray);
+            var latLng = event.overlay.getPosition();
+            var lat = latLng.getLat().toFixed(5);
+            var lng = latLng.getLng().toFixed(5);
+            var center = new qq.maps.LatLng(lat, lng);
+            var geocoder = new qq.maps.Geocoder();
+            geocoder.getAddress(latLng);
+            //设置服务请求成功的回调函数
+            geocoder.setComplete(function(result) {
+                doMarker(center, result.detail.address + latLng);
+                doCircle(center);
+                // console.log("圆形中心为:" + center + "半径为:" + radius);
+            });
+            //若服务请求失败，则运行以下函数
+            geocoder.setError(function() {
+                alert("出错了，请输入正确的经纬度！！！");
+            });
+        }
+    });
+
+    //创建一个marker
+    function doMarker(center, title) {
+        var marker = new qq.maps.Marker({
+            //设置Marker的位置坐标
+            position: center,
+            //设置显示Marker的地图
+            map: map,
+            title: title
+        });
+
+        //设置Marker的可见性，为true时可见,false时不可见，默认属性为true
+        marker.setVisible(true);
+        //设置Marker的动画属性为从落下
+        marker.setAnimation(qq.maps.MarkerAnimation.DOWN);
+        overlaysArray.push(marker);
+        marker.setMap(map);
+        document.getElementById('L_coord').value = center.lng + ',' + center.lat;
+    }
+    //创建一个圆形覆盖物
+    function doCircle(center) {
+        var circle = new qq.maps.Circle({
+            map: map,
+            center: center,
+            radius: radius,
+            strokeWeight: 5
+        });
+        overlaysArray.push(circle);
+        circle.setMap(map);
+    }
+    //清除覆盖物
+    function clearOverlays(overlaysArray) {
+        if (overlaysArray) {
+            for (i in overlaysArray) {
+                overlaysArray[i].setMap(null);
+                document.getElementById('L_coord').value = '';
+            }
+        }
+    }
+
+    form.verify({
+        coord: function(value) {
+            if (value == '') {
+                return '请先选择坐标！';
+            }
+        }
+    });
+    form.on('submit(search)', function(data) {
+        data && parent.$("#L_marker").val(data.field.coord), utils._close();
+        return false;
+    });
+    </script>
+</body>
+
+</html>

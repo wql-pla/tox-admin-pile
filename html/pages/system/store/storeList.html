@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>门店管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>门店管理</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">门店名称</label>
+                                <div class="layui-input-inline">
+                                    <select name="id" lay-search="" lay-filter="stores" id="L_stores"></select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">联系电话</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="tel" class="layui-input" maxlength="11">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">联系人</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="linkman" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" title="搜索" class="layui-btn" lay-filter="search" lay-submit=""><i class="layui-icon">&#xe615;</i>搜索</button>
+                                <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>门店列表</legend>
+            <div class="layui-field-box">
+                <button class="layui-btn" onclick="utils._open('门店新增','./storeAddOrEdit.html',40,60)"><i class="layui-icon">&#xe654;</i>新增</button>
+                <table class="layui-table" lay-even>
+                    <thead>
+                        <tr>
+                            <td>序号</td>
+                            <td>门店名称</td>
+                            <td>门店地址</td>
+                            <td>联系电话</td>
+                            <td>联系人</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+                <div id="pageWrap"></div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    //获取门店信息
+    // utils.selTemplate(0, '#L_stores', utils.getStore);
+    utils.selTemplate('#L_stores', 0, 0);
+
+    var total = "";
+
+    function getList(data) {
+        var pageNum = data.pageNum,
+            pageSize = data.pageSize;
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/store/list',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                total = res.data.totalCount;
+                var data = res.data.list;
+                var s = "";
+                $.each(data, function(v, o) {
+                    s += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                    s += '<td>' + utils.isNull(o.name) + '</td>';
+                    s += '<td>' + utils.isNull(o.address) + '</td>';
+                    s += '<td>' + utils.isNull(o.tel) + '</td>';
+                    s += '<td>' + utils.isNull(o.linkman) + '</td>';
+                    s += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'门店详情\',\'./storeAddOrEdit.html?id=' + o.id + '\',40,60)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                });
+                if (data.length > 0) {
+                    $("#tbody").html(s);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function initList(pageSize) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            id: utils.isUndefined($('#L_stores').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            tel: $('input[name=tel]').val().trim(),
+            linkman: $('input[name=linkman]').val().trim(),
+        }
+        getList(mydata);
+        utils.pages(total, getList, mydata);
+    }
+    //初始化
+    initList(10);
+
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+    </script>
+</body>
+
+</html>

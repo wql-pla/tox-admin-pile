@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>兑换码管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>兑换码信息</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so">
+                        <!-- <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">兑换码名称</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="name" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">起始时间</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="startDate" class="layui-input" id="L_startDate" placeholder="yyyy-MM-dd HH:mm:ss">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">结束时间</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="endDate" class="layui-input" id="L_endDate" placeholder="yyyy-MM-dd HH:mm:ss">
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">兑换码名称</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="name" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">启用状态</label>
+                                    <div class="layui-input-inline">
+                                        <select name="status" lay-search="" lay-filter="" id="L_status">
+                                            <option value="">请选择</option>
+                                            <option value="0">停用</option>
+                                            <option value="1">启用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <button type="button" title="搜索" lay-filter="search" lay-submit="" class="layui-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                                    <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>兑换码列表</legend>
+            <div class="layui-field-box">
+                <button class="layui-btn" onclick="utils._open('兑换码新增','./exchangeCodeAddOrEdit.html',100,100)"><i class="layui-icon">&#xe654;</i>新增</button>
+                <div class="layui-tab layui-tab-brief" lay-filter="tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">多次兑换</li>
+                        <li>单次兑换</li>
+                    </ul>
+                </div>
+                <div class="layui-form">
+                    <table class="layui-table" lay-even>
+                        <thead id="thead">
+                            <tr id="L_more">
+                                <td>序号</td>
+                                <td>兑换码名称</td>
+                                <td>兑换码</td>
+                                <td>兑换比</td>
+                                <td>兑换开始日期</td>
+                                <td>兑换结束日期</td>
+                                <td>启用状态</td>
+                                <td>操作</td>
+                            </tr>
+                            <tr id="L_one">
+                                <td>序号</td>
+                                <td>兑换码名称</td>
+                                <td>兑换数量</td>
+                                <td>兑换开始日期</td>
+                                <td>兑换结束日期</td>
+                                <td>启用状态</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                    <div id="pageWrap"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    //日期时间选择器
+    utils.start2endDate('#L_startDate', '#L_endDate');
+
+    var total = "";
+    var isMore = 1; //默认多次
+
+    
+    //多次兑换
+    var moreExchange = $("#L_more").detach();
+    //单次兑换
+    var oneExchange = $("#L_one").detach();
+
+    //tab切换
+    $('.layui-tab-title li').click(function() {
+        var tabIndex = Number($(this).index());
+        isMore = tabIndex == 0 ? 1 : 0;
+        utils._loading(function() {
+            initList(10);
+        });
+    });
+
+    /*启用-停用*/
+    function openOrClose(ele, id) {
+        var title = $(ele).attr('title');
+        utils._confirm('确认要' + title + '吗？', function() {
+            var data = { id, status: $(ele).attr('data-status') }
+            if (title == '启用') {
+                //启用
+                qtFn(data, function() {
+                    $(ele).find('span').html('停用');
+                    $(ele).find('i').html('&#xe601;');
+                    $(ele).addClass('layui-btn-danger').removeClass('layui-btn-normal').attr({ 'title': '停用', 'data-status': 0 });
+                    $(ele).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('启用');
+                    layer.msg('已启用!', { icon: 1, time: 1000, shade: 0.4, });
+                });
+            } else {
+                //停用
+                qtFn(data, function() {
+                    $(ele).find('span').html('启用');
+                    $(ele).find('i').html('&#xe62f;');
+                    $(ele).addClass('layui-btn-normal').removeClass('layui-btn-danger').attr({ 'title': '启用', 'data-status': 1 });
+                    $(ele).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('停用');
+                    layer.msg('已停用!', { icon: 5, time: 1000, shade: 0.4 });
+                })
+            }
+        });
+    }
+
+    function qtFn(data, callback) {
+        $.ajax({
+            type: "post",
+            url: ajaxUrl + "/activity/editActivity",
+            async: true,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    ("function" == typeof callback) && callback();
+                } else {
+                    utils._tips('操作失败', 2000);
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+    /**
+     * 表头
+     */
+    function loadThead(val) {
+        if (val == 0) {
+            $("#thead").html(oneExchange);
+        } else if (val == 1) {
+            $("#thead").html(moreExchange);
+        }
+    }
+
+    function loadTbody(data) {
+        var pageNum = data.pageNum,
+            pageSize = data.pageSize;
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/activity/selectActivitys',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                total = res.data.total;
+                var ret = res.data.list;
+                // console.log(ret);
+                var tbody = '';
+                // if (Number(data.isMore) == 1) {
+                //多次兑换
+                $.each(ret, function(v, o) {
+                    tbody += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                    tbody += '<td>' + utils.isNull(o.name) + '</td>';
+                    if (Number(o.isMore) == 1) {
+                        tbody += '<td>' + utils.isNull(o.redeems[0].code) + '</td>';
+                        tbody += '<td>' + utils.fillZero(o.allNum) + "/" + utils.fillZero(o.number) + '</td>';
+                    } else if (Number(o.isMore) == 0) {
+                        tbody += '<td>' + utils.fillZero(o.number) + '</td>';
+                    }
+                    tbody += '<td>' + utils.isNull(o.fromDate) + '</td>';
+                    tbody += '<td>' + utils.isNull(o.toDate) + '</td>';
+                    tbody += '<td class="td-status"><span class="layui-btn layui-btn-normal layui-btn-mini ' + (o.status == 0 ? "layui-btn-disabled" : "") + '">' + utils.getJson("qtActivity", o.status) + '</span></td>';
+                    tbody += '<td><button type="button" class="layui-btn ' + (o.status == 0 ? "layui-btn-normal" : "layui-btn-danger") + ' layui-btn-mini" data-status=' + (o.status == 0 ? 1 : 0) + '  onclick="openOrClose(this,' + o.id + ')" title="' + (o.status == 0 ? "启用" : "停用") + '">' + (o.status == 0 ? "<i class=\"layui-icon\">&#xe62f;</i><span>启用</span>" : "<i class=\"layui-icon\">&#xe601;</i><span>停用</span>") + '</button><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'兑换码详情\',\'./exchangeCodeAddOrEdit.html?id=' + o.id + '&isMore=' + o.isMore + '\',100,100)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                });
+
+                // } else if (Number(data.isMore) == 0) {
+                //     //单次兑换
+                //     $.each(ret, function(v, o) {
+                //         tbody += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                //         tbody += '<td>' + utils.isNull(o.name) + '</td>';
+                //         tbody += '<td>' + utils.fillZero(o.number) + '</td>';
+                //         tbody += '<td>' + utils.isNull(o.fromDate) + '</td>';
+                //         tbody += '<td>' + utils.isNull(o.toDate) + '</td>';
+                //         tbody += '<td class="td-status"><span class="layui-btn layui-btn-normal layui-btn-mini ' + (o.status == 0 ? "layui-btn-disabled" : "") + '">' + utils.getJson("qtActivity", o.status) + '</span></td>';
+                //         tbody += '<td><button type="button" class="layui-btn ' + (o.status == 0 ? "layui-btn-normal" : "layui-btn-danger") + ' layui-btn-mini" data-status=' + (o.status == 0 ? 1 : 0) + '  onclick="openOrClose(this,' + o.id + ')" title="' + (o.status == 0 ? "启用" : "停用") + '">' + (o.status == 0 ? "<i class=\"layui-icon\">&#xe62f;</i><span>启用</span>" : "<i class=\"layui-icon\">&#xe601;</i><span>停用</span>") + '</button><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'详情\',\'./exchangeCodeAddOrEdit.html?id=' + o.id + '&isMore=' + o.isMore + '\',100,100)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                //     });
+                // }
+
+                if (ret.length > 0) {
+                    $("#tbody").html(tbody);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+
+    function initList(pageSize) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            isMore,
+            name: $('input[name=name]').val().trim(),
+            status: utils.isUndefined($('#L_status').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            // fromDate: utils.checkDate($('#L_startDate').val().trim()),
+            // toDate: utils.checkDate($('#L_endDate').val().trim()),
+        }
+        loadThead(isMore);
+        loadTbody(mydata);
+        utils.pages(total, loadTbody, mydata);
+    }
+    //初始化
+    initList(10);
+
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+    </script>
+</body>
+
+</html>

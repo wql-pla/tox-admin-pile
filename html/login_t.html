@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>后台登录</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="shortcut icon" href="./images/LOGO2@2x.png" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+</head>
+
+<body class="login-bg">
+    <div class="login">
+        <div class="message">电桩后台管理系统</div>
+        <div id="darkbannerwrap"></div>
+        <form method="post" class="layui-form">
+            <div class="layui-form-item">
+                <input name="name" placeholder="用户名" type="text" lay-verify="username" id="L_username" class="layui-input" autocomplete="off" autofocus>
+            </div>
+            <div class="layui-form-item">
+                <input name="password" placeholder="密码" type="password" lay-verify="password" id="L_password" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <input type="button" value="登录" lay-submit lay-filter="login" class="submit_btn">
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript" src="./lib/jquery/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/public.js"></script>
+    <script>
+    $(function() {
+        layui.use('form', function() {
+            var form = layui.form;
+            //自定义验证规则
+            form.verify({
+                username: function(value) {
+                    if (!value) return '用户名不能为空';
+                },
+                password: function(value) {
+                    if (!value) return '密码不能为空';
+                },
+            });
+
+            //监听提交
+            form.on('submit(login)', function(data) {
+                login(data.field);
+                return false;
+            });
+
+            function login(data) {
+                $.ajax({
+                        async: false,
+                        type: 'post',
+                        url: ajaxUrl + '/admin/login',
+                        dataType: 'json',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                    })
+                    .done(function(res) {
+                        // console.log(res)
+                        if (res.result == 100 || res.result == "100") {
+                            window.sessionStorage.setItem("username", data.name);
+                            if (data.name == 'admin') {
+                                utils._msg('登录成功', function() {
+                                    window.location.href = "./index.html?timestamp=" + new Date().getTime();
+                                });
+                            } else {
+                                window.location.href = "./qcode.html?timestamp=" + new Date().getTime();
+                            }
+                        } else {
+                            layer.msg(res.msg, {
+                                icon: 2,
+                                time: 1000,
+                                shade: 0.6,
+                                anim: 6,
+                                offset: ['500px', '']
+                            }, function() {});
+                        }
+
+                    })
+                    .fail(function(err) {
+                        console.log(err);
+                    })
+            }
+            $(document).keyup(function(event) {
+                if (event.keyCode == 13) {
+                    $(".submit_btn").trigger("click");
+                }
+            });
+        });
+    })
+    </script>
+</body>
+
+</html>

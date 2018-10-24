@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>活动管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>活动管理</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so">
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label for="L_name" class="layui-form-label w80">活动名称</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="name" class="layui-input" id="L_name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label for="L_startTime" class="layui-form-label w80">活动开始时间</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="startTime" class="layui-input" id="startDate" placeholder="yyyy-MM-dd hh:mm:ss" id="L_startTime">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label for="L_endTime" class="layui-form-label w80">活动结束时间</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="endTime" class="layui-input" id="endDate" placeholder="yyyy-MM-dd hh:mm:ss" id="L_endTime">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label for="L_type" class="layui-form-label w80">活动类型</label>
+                                    <div class="layui-input-inline">
+                                        <select name="type" lay-search="" lay-filter="" id="L_type">
+                                            <option value="">请选择</option>
+                                            <option value="1">新注册</option>
+                                            <option value="2">老带新</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label for="L_status" class="layui-form-label w80">活动状态</label>
+                                    <div class="layui-input-inline">
+                                        <select name="status" lay-search="" lay-filter="" id="L_status">
+                                            <option value="">请选择</option>
+                                            <option value="1">启用</option>
+                                            <option value="0">停用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <button type="button" title="搜索" class="layui-btn" lay-filter="search" lay-submit=""><i class="layui-icon">&#xe615;</i>搜索</button>
+                                    <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>活动列表</legend>
+            <div class="layui-field-box">
+                <button class="layui-btn" onclick="utils._open('活动新增','./activityAddOrEdit.html',100,100)"><i class="layui-icon">&#xe654;</i>新增</button>
+                <table class="layui-table" lay-even>
+                    <thead>
+                        <tr>
+                            <td>活动编号</td>
+                            <td>活动名称</td>
+                            <td>活动类型</td>
+                            <td>活动开始时间</td>
+                            <td>活动结束时间</td>
+                            <td>活动状态</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+                <div id="pageWrap"></div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    laydate.render({
+        elem: '#startDate',
+        type: 'datetime'
+    });
+    laydate.render({
+        elem: '#endDate',
+        type: 'datetime'
+    });
+    var total = "";
+
+    function getList(data) {
+        var pageNum = data.pageNum,
+            pageSize = data.pageSize;
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/activity2/selectActivitys',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                total = res.data.total;
+                var data = res.data.list;
+                if (data.length > 0) {
+                    var s = "";
+                    $.each(data, function(v, o) {
+                        s += '<tr><td>' + o.id + '</td>';
+                        s += '<td>' + utils.isNull(o.name) + '</td>';
+                        s += '<td>' + utils.getJson("qtType", o.type - 1) + '</td>';
+                        s += '<td class="td-startTime">' + utils.formatDate(o.startTime, 2) + '</td>';
+                        s += '<td class="td-endTime">' + utils.formatDate(o.endTime, 2) + '</td>';
+                        s += '<td class="td-status"><span class="layui-btn layui-btn-normal layui-btn-mini ' + (o.status == 0 ? "layui-btn-disabled" : "") + '">' + utils.getJson("qtActivity", o.status) + '</span></td>';
+                        s += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'活动详情\',\'./activityAddOrEdit.html?id=' + o.id + '&status=' + o.status + '\',100,100)"><i class="layui-icon">&#xe642;</i>' + (o.status == 0 ? "编辑" : "查看") + '</button><button type="button" class="layui-btn ' + (o.status == 0 ? "layui-btn-normal" : "layui-btn-danger") + ' layui-btn-mini" data-status=' + (o.status == 0 ? 1 : 0) + '  onclick="openOrClose(this,' + o.id + ')" title="' + (o.status == 0 ? "启用" : "停用") + '">' + (o.status == 0 ? "<i class=\"layui-icon\">&#xe62f;</i><span>启用</span>" : "<i class=\"layui-icon\">&#xe601;</i><span>停用</span>") + '</button></td></tr>';
+                    });
+                    $("#tbody").html(s);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function initList(pageSize) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            name: $('input[name=name]').val().trim(),
+            startTime: utils.checkDate($('input[name=startTime]').val().trim()),
+            endTime: utils.checkDate($('input[name=endTime]').val().trim()),
+            type: utils.isUndefined($('#L_type').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            status: utils.isUndefined($('#L_status').next('.layui-form-select').find('.layui-this').attr('lay-value'))
+        }
+        getList(mydata);
+        utils.pages(total, getList, mydata);
+    }
+
+    //初始化
+    initList(10);
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+
+    /*启用-停用*/
+    function openOrClose(ele, id) {
+        var title = $(ele).attr('title');
+        utils._confirm('确认要' + title + '吗？', function() {
+            var data = {
+                id,
+                status: $(ele).attr('data-status'),
+                startTime: utils.checkDate($(ele).parents("tr").find(".td-startTime").text()),
+                endTime: utils.checkDate($(ele).parents("tr").find(".td-endTime").text())
+            }
+            if (title == '启用') {
+                //启用
+                qtFn(data, function() {
+                    $(ele).find('span').html('停用');
+                    $(ele).find('i').html('&#xe601;');
+                    $(ele).addClass('layui-btn-danger').removeClass('layui-btn-normal').attr({ 'title': '停用', 'data-status': 0 });
+                    $(ele).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('启用');
+                    layer.msg('已启用!', { icon: 1, time: 1000, shade: 0.4, });
+                });
+            } else {
+                //停用
+                qtFn(data, function() {
+                    $(ele).find('span').html('启用');
+                    $(ele).find('i').html('&#xe62f;');
+                    $(ele).addClass('layui-btn-normal').removeClass('layui-btn-danger').attr({ 'title': '启用', 'data-status': 1 });
+                    $(ele).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('停用');
+                    layer.msg('已停用!', { icon: 5, time: 1000, shade: 0.4 });
+                })
+            }
+        });
+    }
+
+    function qtFn(data, callback) {
+        $.ajax({
+            type: "post",
+            url: ajaxUrl + "/activity2/editActivity",
+            async: true,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    ("function" == typeof callback) && callback();
+                } else {
+                    utils._tips('操作失败', 2000);
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+    </script>
+</body>
+
+</html>

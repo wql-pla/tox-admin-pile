@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>电桩新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_pileNum" class="layui-form-label">
+                    <span class="x-red">*</span>电桩编号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_pileNum" name="pileNum" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_wxcode" class="layui-form-label">
+                    <span class="x-red">*</span>微信码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_wxcode" name="wxCode" required="" lay-verify="required" autocomplete="off" maxlength="11" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_version" class="layui-form-label">
+                    <span class="x-red">*</span>所属版本号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_version" name="softVersion" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_firm" class="layui-form-label">
+                    <span class="x-red">*</span>所属供应商
+                </label>
+                <div class="layui-input-inline">
+                    <select id="L_firm" name="firmId" required="" lay-verify="required" lay-search="" lay-filter="firm"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_type" class="layui-form-label">
+                    <span class="x-red">*</span>产品类型
+                </label>
+                <div class="layui-input-inline">
+                    <select id="L_type" name="type" required="" lay-verify="required" lay-search="" lay-filter="type">
+                        <option value="">请选择</option>
+                        <option value="3">交流单枪</option>
+                        <option value="4">交流双枪</option>
+                        <option value="5">直流单枪</option>
+                        <option value="6">直流双枪</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_station" class="layui-form-label">
+                    <span class="x-red">*</span>所属桩站
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_station" name="chargeStandardId" required="" lay-verify="required" autocomplete="off" class="layui-input" placeholder="点击绑定桩站" onclick="utils._open('绑定桩站','./bindStation.html',100,100)" readonly style="cursor: pointer;">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    //获取供应商信息
+    utils.selTemplate('#L_firm', 1, 1);
+
+    function addPile(data) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/pile/insertPile',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    })
+                } else {
+                    layer.alert(res.msg, {
+                        shift: 6 //shake
+                    });
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    var firmId = '';
+    form.on('select(firm)', function(data) {
+        // console.log(data.elem[data.elem.selectedIndex])
+        firmId = data.elem[data.elem.selectedIndex].getAttribute("data-firmid");
+    });
+    //监听提交
+    form.on('submit(save)', function(data) {
+        data.field.firmId = firmId;
+        data.field.chargeStandardId = $('#L_station').attr('data-chargestandardid');
+        // console.log(data.field);
+        addPile(data.field);
+        // 
+        return false;
+    });
+    </script>
+</body>
+
+</html>

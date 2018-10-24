@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>优惠券选择</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_coupon" class="layui-form-label">
+                    <span class="x-red">*</span>优惠券
+                </label>
+                <div class="layui-input-inline">
+                    <select name="couponId" lay-search="" lay-filter="coupon" required="" lay-verify="required" id="L_coupon"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_num" class="layui-form-label">
+                    <span class="x-red">*</span>数量
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_num" name="num" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_contact" class="layui-form-label">
+                    <span class="x-red">*</span>生效时间
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_fromDate" name="fromDate" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input" readonly>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_address" class="layui-form-label">
+                    <span class="x-red">*</span>失效日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_toDate" name="toDate" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input" readonly>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    utils.getSelectList('#L_coupon', 2, 2);
+    form.on('select(coupon)', function(data) {
+        var date = data.elem[data.elem.selectedIndex].getAttribute("name");
+        if (data.value && (data.value != '')) {
+            $('#L_fromDate').val(date.split(',')[0]);
+            $('#L_toDate').val(date.split(',')[1]);
+        } else {
+            $('#L_fromDate').val('');
+            $('#L_toDate').val('');
+        }
+    });
+
+    var couponStr = window.localStorage.getItem('coupon');
+
+    if (!couponStr) {
+        window.localStorage.setItem('coupon', JSON.stringify(new Array));
+    }
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        data.field.couponName = $('#L_coupon').next('.layui-form-select').find('.layui-this').text();
+        var arr = JSON.parse(couponStr);
+        arr.push(data.field);
+        window.localStorage.setItem('coupon', JSON.stringify(arr));
+        utils._msg('', function() {
+            // parent.window.location.reload(true);
+            parent.getList();
+            utils._close();
+        })
+        return false;
+    });
+    </script>
+</body>
+
+</html>

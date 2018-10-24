@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>电桩管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>电桩管理</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so">
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">桩号</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="pileNum" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">桩站</label>
+                                    <div class="layui-input-inline">
+                                        <select name="stationName" lay-search="" lay-filter="pile" id="pile"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">供应商名称</label>
+                                    <div class="layui-input-inline">
+                                        <select name="firmName" lay-search="" lay-filter="firm" id="firm"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">版本号</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="softVersion" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">起始时间</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="startDate" class="layui-input" id="startDate" placeholder="yyyy-MM-dd">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">结束时间</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="endDate" class="layui-input" id="endDate" placeholder="yyyy-MM-dd">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">产品类型</label>
+                                    <div class="layui-input-inline">
+                                        <select name="type" lay-search="" lay-filter="type" id="type">
+                                            <option value="">请选择</option>
+                                            <option value="3">交流单枪</option>
+                                            <option value="4">交流双枪</option>
+                                            <option value="5">直流单枪</option>
+                                            <option value="6">直流双枪</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <button type="button" title="搜索" lay-filter="search" lay-submit="" class="layui-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                                    <button type="reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>电桩列表</legend>
+            <div class="layui-field-box">
+                <button class="layui-btn" title="导出到EXCEL" onclick="table2excel()"><i class="layui-icon">&#xe601;</i>导出</button>
+                <button class="layui-btn" title="批量导入" onclick="utils._open('批量导入','./uploadPile.html',35,45)"><i class="layui-icon">&#xe681;</i>批量导入</button>
+                <button class="layui-btn" title="更改桩站" onclick="utils._open('更改桩站','./changeStation.html',40,70)"><i class="layui-icon">&#xe681;</i>更改桩站</button>
+                <button class="layui-btn" onclick="utils._open('电桩新增','./pileAdd.html',100,100)"><i class="layui-icon">&#xe654;</i>新增</button>
+                <button class="layui-btn" onclick="utils._open('电桩升级','./pileUpdate.html',100,100)"><i class="layui-icon">&#xe628;</i>升级</button>
+                <button class="layui-btn" onclick="utils._open('修改IP','./modifyIp.html',100,100)"><i class="layui-icon">&#xe614;</i>修改IP</button>
+                <div class="layui-form">
+                    <table class="layui-table" id="table" lay-even>
+                        <thead>
+                            <tr>
+                                <td>序号</td>
+                                <td>桩号</td>
+                                <td>微信码</td>
+                                <td>所属桩站</td>
+                                <td>所属供应商</td>
+                                <td>产品类型</td>
+                                <td>上线日期</td>
+                                <td>版本号</td>
+                                <td>升级状态</td>
+                                <td class="noExl">操作</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                    <div id="pageWrap"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/table2excel/jquery.table2excel.min.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    //日期时间选择器
+    laydate.render({
+        elem: '#startDate'
+    });
+    laydate.render({
+        elem: '#endDate'
+    });
+    //获取供应商信息
+    utils.selTemplate('#firm', 1, 1);
+    //获取桩站信息
+    utils.selTemplate('#pile', 2, 3);
+    var total = "";
+
+    function getList(data) {
+        var pageNum = data.pageNum,
+            pageSize = data.pageSize;
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/pile/selectPiles',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                total = res.data.total;
+                var data = res.data.list;
+                var s = "";
+                $.each(data, function(v, o) {
+                    s += '<tr><td>' + (v + 1 + pageSize * pageNum) + '</td>';
+                    s += '<td>&nbsp;' + utils.isNull(o.pileNum) + '</td>';
+                    s += '<td>' + utils.isNull(o.wxCode) + '</td>';
+                    s += '<td>' + utils.isNull(o.station.stationName) + '</td>';
+                    s += '<td>' + utils.isNull(o.firmName) + '</td>';
+                    s += '<td>' + utils.productType(o.type) + '</td>';
+                    s += '<td>' + utils.formatDate(o.onlineDate, 1) + '</td>';
+                    s += '<td>' + utils.isNull(o.softVersion) + '</td>';
+                    s += '<td>' + utils.checkPileStatus(o.updateStatus) + '</td>';
+                    s += '<td class="noExl"><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'详情\',\'./pileEdit.html?id=' + o.id + '\',40,90)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                });
+                if (data.length > 0) {
+                    $("#tbody").html(s);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+
+    function initList(pageSize) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            pileNum: $('input[name=pileNum]').val().trim(),
+            firmName: $('#firm').next('.layui-form-select').find('.layui-this').text(),
+            stationName: $('#pile').next('.layui-form-select').find('.layui-this').text(),
+            type: utils.isUndefined($('#type').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            softVersion: $('input[name=softVersion]').val().trim(),
+            startDate: utils.checkDate($('input[name=startDate]').val().trim()),
+            endDate: utils.checkDate($('input[name=endDate]').val().trim()),
+        }
+        getList(mydata);
+        utils.pages(total, getList, mydata);
+    }
+    //初始化
+    initList(10);
+
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+
+    //导出到excel
+    function table2excel() {
+        utils.toExcel("#table", '电桩信息', -1, initList);
+    }
+    </script>
+</body>
+
+</html>

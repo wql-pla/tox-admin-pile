@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>兑换码新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_name" class="layui-form-label">
+                                            兑换码名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_name" name="name" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_couponsType" class="layui-form-label">
+                                            选择优惠券类型
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="couponsType" lay-search="" lay-filter="couponsType" required="" lay-verify="required" id="L_couponsType">
+                                                <option value="1">优惠券</option>
+                                                <option value="2">优惠组合</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_fromDate" class="layui-form-label">
+                                            兑换开始日期
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_fromDate" name="fromDate" autocomplete="off" required="" lay-verify="required" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_toDate" class="layui-form-label">
+                                            兑换结束日期
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_toDate" name="toDate" autocomplete="off" required="" lay-verify="required" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_isMore" class="layui-form-label">
+                                            是否允许多人使用
+                                        </label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="isMore" lay-skin="switch" lay-filter="isMore" required="" lay-verify="required" lay-text="是|否" id="L_isMore">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6" id="L_allowContainer">
+                                    <div class="layui-inline" id="L_allow">
+                                        <label for="L_number" class="layui-form-label">
+                                            允许兑换数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_number" name="number" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" id="L_notAllow">
+                                        <label for="L_number" class="layui-form-label">
+                                            生成数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_number" name="number" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_couponsId" class="layui-form-label">
+                                            绑定优惠券
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <select name="couponsId" lay-search="" lay-filter="" required="" lay-verify="required" id="L_couponsId">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card" id="editTable">
+                    <div class="layui-card-header">兑换码列表</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" title="导出到EXCEL" onclick="table2excel()"><i class="layui-icon">&#xe601;</i>导出</button>
+                        <table class="layui-table" id="table" lay-even>
+                            <thead id="thead">
+                                <tr id="L_more">
+                                    <td>序号</td>
+                                    <td>兑换人</td>
+                                    <td>兑换时间</td>
+                                </tr>
+                                <tr id="L_one">
+                                    <td>序号</td>
+                                    <td>兑换码</td>
+                                    <td>兑换状态</td>
+                                    <td>兑换时间</td>
+                                    <td>兑换人</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="x-center">
+                    <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                    <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/table2excel/jquery.table2excel.min.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    utils.start2endDate('#L_fromDate', '#L_toDate');
+
+    var isMore = 0; //默认不允许多人使用
+    var allow = $('#L_allow').detach();
+    var notAllow = $('#L_notAllow').detach();
+
+    //多次兑换
+    var moreThead = $("#L_more").detach();
+    //单次兑换
+    var oneThead = $("#L_one").detach();
+
+    $('#L_allowContainer').html(notAllow);
+
+    var id = utils.GetUrlpara('id');
+    (id != null) ? detail(): $('#editTable').detach();
+    // 
+    /*
+        是否允许多人使用//不允许0，允许1
+     */
+    form.on('switch(isMore)', function(data) {
+        isMore = this.checked ? 1 : 0;
+        $('#L_allowContainer').html(this.checked ? allow : notAllow);
+    });
+
+    /*
+        优惠券类型选择--优惠券、优惠组合
+     */
+    //默认优惠券
+    renderCouponTpl(1);
+    form.on('select(couponsType)', function(data) {
+        var value = data.value;
+        renderCouponTpl(value);
+    });
+
+    //监听提交
+    form.on('submit(save)', function(data) {
+        utils.GetUrlpara('id') != null ? editSubmit(data) : addSubmit(data);
+        return false;
+    });
+
+
+    /*
+        单次兑换
+     */
+    function tableSingle(data) {
+        if (data.length > 0) {
+            var s = "";
+            $.each(data, function(v, o) {
+                s += '<tr><td>' + (v + 1) + '</td>';
+                s += '<td>' + utils.nullToString(o.code) + '</td>';
+                s += '<td>' + (o.isUse == 0 ? "未兑换" : "已兑换") + '</td>';
+                s += '<td>' + utils.nullToString(utils.formatDate(o.createDate, 2)) + '</td>';
+                s += '<td>' + utils.nullToString(o.userPhone) + '</td></tr>';
+            });
+            $("#tbody").html(s);
+        } else {
+            $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+        }
+    }
+    /*
+        多次兑换
+     */
+    function tableMore(data) {
+        if (data.length > 0) {
+            var s = "";
+            $.each(data, function(v, o) {
+                s += '<tr><td>' + (v + 1) + '</td>';
+                s += '<td>' + utils.nullToString(o.phone) + '</td>';
+                s += '<td>' + utils.nullToString(utils.formatDate(o.createDate, 2)) + '</td></tr>';
+            });
+            $("#tbody").html(s);
+        } else {
+            $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+        }
+    }
+    /*
+        表头
+     */
+    function renderTable(val, data) {
+        if (Number(val) == 0) {
+            $("#thead").html(oneThead);
+            tableSingle(data);
+        } else if (Number(val) == 1) {
+            $("#thead").html(moreThead);
+            tableMore(data);
+        }
+    }
+    /*
+        优惠券类型选择--优惠券、优惠组合
+     */
+    function renderCouponTpl(value) {
+        utils._loading(function() {
+            if (Number(value) == 1) {
+                //优惠券
+                utils.getSelectList('#L_couponsId', 2, 2);
+            } else if (Number(value) == 2) {
+                //优惠组合
+                utils.getSelectList('#L_couponsId', 3, 3);
+            }
+        });
+    }
+    /*
+        导出到excel 
+     */
+    function table2excel() {
+        utils.toExcel("#table", '兑换码信息');
+    }
+    /*
+        详情
+     */
+    function detail() {
+        $.ajax({
+                async: true,
+                url: ajaxUrl + '/activity/selectActivityById',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ id, isMore: utils.GetUrlpara('isMore') }),
+            })
+            .done(function(res) {
+                // console.log(res);
+                isMore = res.data.isMore;
+                $('#L_name').val(res.data.name).attr('disabled', true).removeAttr('name');
+                $('#L_fromDate').val(res.data.fromDate).attr('disabled', true).removeAttr('name');
+                $('#L_toDate').val(res.data.toDate);
+                $('#L_isMore').attr('checked', res.data.isMore == 1 ? true : false).attr('disabled', true).removeAttr('name');
+                $('#L_allowContainer').html(res.data.isMore == 1 ? allow : notAllow);
+                $('#L_number').val(res.data.number).attr('disabled', true).removeAttr('name');
+                //选择优惠券类型
+                $('#L_couponsType').attr('disabled', true).removeAttr('name').find('option[value="' + res.data.couponsType + '"]').prop('selected', true);
+                //绑定优惠券
+                $('#L_couponsId').attr('disabled', true).removeAttr('name').find('option[value="' + res.data.couponsId + '"]').prop('selected', true);
+                //列表
+                if (Number(res.data.isMore) == 0) {
+                    renderTable(res.data.isMore, res.data.redeems);
+                } else if (Number(res.data.isMore) == 1) {
+                    renderTable(res.data.isMore, res.data.users);
+                }
+                form.render('checkbox');
+                form.render('select');
+            })
+            .fail(function(err) {
+                console.log(err);
+            });
+    }
+
+
+    //新增
+    function addSubmit(data) {
+        data.field.isMore = isMore;
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/activity/insertActivity',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Number(res.result) == 100) {
+                    utils._msg(res.msg, function() {
+                        parent.window.location.reload(true);
+                    })
+                } else if (Number(res.result) == 1002) {
+                    utils._tips('兑换码生成数量超限', 1500);
+                } else {
+                    utils._tips(res.msg, 1500);
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    /*
+        编辑
+     */
+    function editSubmit(data) {
+        data.field.id = utils.GetUrlpara('id');
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/activity/editActivity',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Boolean(res.result) == true) {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    })
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+    </script>
+</body>
+
+</html>

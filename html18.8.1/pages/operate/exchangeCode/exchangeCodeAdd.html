@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>兑换码新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">兑换码信息</div>
+                        <div class="layui-card-body">
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_name" class="layui-form-label">
+                                            活动名称
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_name" name="name" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_status" class="layui-form-label">
+                                            是否启用
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <!-- <select name="status" required="" lay-verify="required" lay-search="" lay-filter="status" id="L_status">
+                                                <option value="">请选择</option>
+                                                <option value="0">停用</option>
+                                                <option value="1">启用</option>
+                                            </select> -->
+                                            <input type="checkbox" name="status" lay-skin="switch" lay-filter="status" required="" lay-verify="required" lay-text="启用|停用" id="L_status">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-row">
+                                    <div class="layui-col-md6">
+                                        <div class="layui-inline">
+                                            <label for="L_fromDate" class="layui-form-label">
+                                                开始时间
+                                            </label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" id="L_fromDate" name="fromDate" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <div class="layui-inline">
+                                            <label for="L_toDate" class="layui-form-label">
+                                                结束时间
+                                            </label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" id="L_toDate" name="toDate" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_isMore" class="layui-form-label">
+                                            是否允许多人使用
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="checkbox" name="isMore" lay-skin="switch" lay-filter="isMore" required="" lay-verify="required" lay-text="是|否" id="L_isMore">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_number" class="layui-form-label">
+                                            生成数量
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_number" name="number" autocomplete="off" required="" lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-col-md6">
+                                    <div class="layui-inline">
+                                        <label for="L_couponsId" class="layui-form-label">
+                                            绑定优惠券
+                                        </label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="L_couponsId" required="" lay-verify="required" autocomplete="off" class="layui-input" placeholder="点击绑定优惠券" onclick="utils._open('绑定优惠券','./bindCoupon.html',100,100)" readonly style="cursor: pointer;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item x-center">
+                        <button class="layui-btn" lay-filter="save" lay-submit="">保存</button>
+                        <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    laydate.render({
+        elem: '#L_fromDate',
+        type: 'datetime'
+    });
+    laydate.render({
+        elem: '#L_toDate',
+        type: 'datetime'
+    });
+
+    function addSubmit(data) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + '/activity/insertActivity',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Number(res.result) == 100) {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    })
+                } else if (Number(res.result) == 1002) {
+                    utils._tips('兑换码生成数量超限', 1500);
+                } else {
+                    utils._tips(res.msg, 1500);
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+            })
+    }
+
+    function switchOnOff(val) {
+        return val = val == "on" ? 1 : 0;
+    }
+    // form.on('switch', function(data) {
+    //     $(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 0);
+    // });
+    // 
+    form.on('switch(isMore)', function(data) {
+        $('#L_number').val(this.checked ? 1 : '').prop('readonly', this.checked ? true : false);
+    });
+    //监听提交
+    form.on('submit(save)', function(data) {
+        //是否启用
+        data.field.status = switchOnOff(data.field.status);
+        //是否允许多人使用
+        data.field.isMore = switchOnOff(data.field.isMore);
+        //绑定优惠券
+        data.field.couponsId = Number($('#L_couponsId').attr('data-couponsId'));
+        // console.log(data.field);
+        addSubmit(data.field);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

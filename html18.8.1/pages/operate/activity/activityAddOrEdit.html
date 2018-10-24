@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>活动新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <div class="layui-form">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label for="L_name" class="layui-form-label">
+                            <span class="x-red">*</span>活动名称
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_name" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label for="L_startTime" class="layui-form-label">
+                            <span class="x-red">*</span>活动开始时间
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_startTime" name="startTime" required="" lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label for="L_endTime" class="layui-form-label">
+                            <span class="x-red">*</span>活动结束时间
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_endTime" name="endTime" required="" lay-verify="required|checkAcCoTime" autocomplete="off" placeholder="yyyy-MM-dd hh:mm:ss" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label for="L_status" class="layui-form-label">
+                            <span class="x-red">*</span>启用状态
+                        </label>
+                        <div class="layui-input-inline">
+                            <select name="status" lay-search="" lay-filter="" required="" lay-verify="required" id="L_status">
+                                <option value="">请选择</option>
+                                <option value="1">启用</option>
+                                <option value="0">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label for="L_type" class="layui-form-label">
+                            <span class="x-red">*</span>活动类型
+                        </label>
+                        <div class="layui-input-inline">
+                            <select name="type" lay-search="" lay-filter="type" required="" lay-verify="required" id="L_type">
+                                <!-- <option value="0">特定用户</option> -->
+                                <option value="1">新注册</option>
+                                <option value="2">老带新</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- 新注册用户 -->
+                <div class="layui-col-md12" id="L_activityContainer">
+                    <div class="layui-col-md12" id="L_newRegister">
+                        <div class="layui-form-item">
+                            <label for="L_giveRule" class="layui-form-label">
+                                <span class="x-red">*</span>新注册用户条件
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="giveRule" lay-search="" lay-filter="" required="" lay-verify="required" id="L_giveRule">
+                                    <option value="">请选择</option>
+                                    <option value="1">注册成功</option>
+                                    <option value="2">有实际充值订单</option>
+                                    <option value="3">有实际充电订单</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_newCouponType" class="layui-form-label">
+                                <span class="x-red">*</span>优惠券类型
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="newCouponType" lay-search="" lay-filter="newCouponType" required="" lay-verify="required" id="L_newCouponType">
+                                    <option value="1">优惠券</option>
+                                    <option value="2">优惠组合</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_newPersonCoupon" class="layui-form-label">
+                                <span class="x-red">*</span>优惠券选择
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="newPersonCoupon" lay-search="" lay-filter="newPersonCoupon" required="" lay-verify="required|checkAcCoTime" id="L_newPersonCoupon">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 老带新发放条件 -->
+                    <div class="layui-col-md12" id="L_old2New">
+                        <div class="layui-form-item">
+                            <label for="L_giveRule" class="layui-form-label">
+                                <span class="x-red">*</span>老带新发放条件
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="giveRule" lay-search="" lay-filter="" required="" lay-verify="required" id="L_giveRule">
+                                    <option value="">请选择</option>
+                                    <option value="1">注册成功</option>
+                                    <option value="2">有实际充值订单</option>
+                                    <option value="3">有实际充电订单</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_newCouponType" class="layui-form-label">
+                                <span class="x-red">*</span>新用户优惠券类型
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="newCouponType" lay-search="" lay-filter="newCouponType" required="" lay-verify="required" id="L_newCouponType">
+                                    <option value="1">优惠券</option>
+                                    <option value="2">优惠组合</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_newPersonCoupon" class="layui-form-label">
+                                <span class="x-red">*</span>新用户优惠券选择
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="newPersonCoupon" lay-search="" lay-filter="newPersonCoupon" required="" lay-verify="required|checkAcCoTime" id="L_newPersonCoupon">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_oldCouponType" class="layui-form-label">
+                                <span class="x-red">*</span>老用户优惠券类型
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="oldCouponType" lay-search="" lay-filter="oldCouponType" required="" lay-verify="required" id="L_oldCouponType">
+                                    <option value="1">优惠券</option>
+                                    <option value="2">优惠组合</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_oldPersonCoupon" class="layui-form-label">
+                                <span class="x-red">*</span>老用户优惠券选择
+                            </label>
+                            <div class="layui-input-inline">
+                                <select name="oldPersonCoupon" lay-search="" lay-filter="oldPersonCoupon" required="" lay-verify="required|checkAcCoTime" id="L_oldPersonCoupon">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12" id="L_saveBtnContainer">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"></label>
+                        <button class="layui-btn" lay-filter="save" lay-submit="" id="L_submitBtn">保存</button>
+                        <button class="layui-btn layui-btn-primary" onclick="utils._close();">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    var id = utils.GetUrlpara('id');
+    var status = utils.GetUrlpara('status'); //启停状态
+    var timeArr = []; //优惠券结束时间
+
+    (id != null) && (detail(id), status != 0 && ($('#L_saveBtnContainer').detach()));
+
+    //新用户注册
+    var newRegister = $('#L_newRegister').detach();
+    //老带新
+    var old2New = $('#L_old2New').detach();
+
+    //默认加载新注册模板
+    activityTypeChoose(1);
+
+    /*
+        活动类型选择--新注册模板、老带新模板
+     */
+    function activityTypeChoose(value) {
+        utils._loading(function() {
+            if (Number(value) == 1) {
+                $('#L_activityContainer').html(newRegister);
+            } else if (Number(value) == 2) {
+                $('#L_activityContainer').html(old2New);
+                oldPerson();
+            }
+            newPerson();
+        });
+    }
+    /*
+        优惠券类型选择--优惠券、优惠组合
+     */
+    function couponTypeChoose(value, ele) {
+        utils._loading(function() {
+            if (Number(value) == 1) {
+                //优惠券
+                utils.getSelectList(ele, 2, 2);
+            } else if (Number(value) == 2) {
+                //优惠组合
+                utils.getSelectList(ele, 3, 3);
+            }
+        });
+    }
+    /*
+        新用户--优惠券、优惠组合对应优惠券下拉选择初始化
+     */
+    function newPerson() {
+        utils.getSelectList('#L_newPersonCoupon', 2, 2);
+        form.on('select(newCouponType)', function(data) {
+            var value = data.value;
+            couponTypeChoose(value, '#L_newPersonCoupon');
+        });
+    }
+
+    /*
+        老用户--优惠券、优惠组合对应优惠券下拉选择初始化
+     */
+    function oldPerson() {
+        utils.getSelectList('#L_oldPersonCoupon', 2, 2);
+        form.on('select(oldCouponType)', function(data) {
+            var value = data.value;
+            couponTypeChoose(value, '#L_oldPersonCoupon');
+        });
+    }
+    /*
+        获取优惠券结束时间
+     */
+    function splitTime(ele) {
+        var val = utils.isUndefined($(ele).next('.layui-form-select').find('.layui-this').attr('lay-value'));
+        var timeStr = $(ele).find('option[value="' + val + '"]').attr('name');
+        var time = timeStr && timeStr.split(',')[1];
+        return time ? time : '';
+    }
+
+    /**
+     * [checkTime 校验优惠券日期是否大于活动日期]
+     * @param  {[type]} acEndTime    [活动结束时间]
+     * @param  {[type]} coEndTimeArr [优惠券结束时间(多个)]
+     * @return {[type]}              [result]
+     */
+    function checkTime(acEndTime, coEndTimeArr) {
+        var flag = true;
+        var acEnd = new Date(acEndTime).valueOf(); //活动结束时间
+        coEndTimeArr.forEach(function(item, index) {
+            var coEndItem = new Date(item).valueOf(); //优惠券结束时间
+            if (acEnd > coEndItem) flag = false;
+        });
+        return !flag ? (utils._tips('活动结束时间不能大于优惠券结束时间', 2000), $("#L_submitBtn").attr("disabled", "true")) : $("#L_submitBtn").removeAttr("disabled");
+    }
+
+    function renderTimeArr(value) {
+        var newEndTime = splitTime('#L_newPersonCoupon');
+        var oldEndTime = splitTime('#L_oldPersonCoupon');
+        var acEndTime = value || $('#L_endTime').val();
+        timeArr = oldEndTime ? [newEndTime, oldEndTime] : [newEndTime];
+        checkTime(acEndTime, timeArr);
+    }
+
+    /*
+        新增、编辑
+     */
+    function options(data, url) {
+        $.ajax({
+                type: "post",
+                async: false,
+                url: ajaxUrl + url,
+                beforeSend: function() {
+                    $("#L_submitBtn").attr("disabled", "true");
+                },
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                if (Number(res.result) == 100) {
+                    utils._msg('', function() {
+                        parent.window.location.reload(true);
+                    });
+                } else {
+                    utils._alert(res.msg, function() {
+                        $("#L_submitBtn").removeAttr("disabled");
+                    });
+                }
+            })
+            .fail(function(err) {
+                console.log(err);
+                $("#L_submitBtn").removeAttr("disabled");
+            })
+    }
+
+    function addSubmit(data) {
+        //新增
+        options(data.field, '/activity2/insertActivity');
+    }
+
+    function editSubmit(data) {
+        //编辑
+        data.field.id = utils.GetUrlpara('id');
+        options(data.field, '/activity2/editActivity');
+    }
+
+    /*
+        查看详情
+     */
+    function detail(val) {
+        $.ajax({
+                type: 'post',
+                async: true,
+                url: ajaxUrl + '/activity2/selectActivityById?activityId=' + val,
+                dataType: 'json',
+                contentType: 'application/json',
+            })
+            .done(function(res) {
+                // console.log(res);
+                $('#L_name').val(res.data.name);
+                $('#L_startTime').val(utils.formatDate(res.data.startTime, 2));
+                $('#L_endTime').val(utils.formatDate(res.data.endTime, 2));
+                $('#L_status').find('option[value="' + res.data.status + '"]').prop('selected', true);
+                $('#L_type').find('option[value="' + res.data.type + '"]').prop('selected', true);
+                //活动类型--新注册、老带新
+                activityTypeChoose(res.data.type);
+                //发放条件--1注册成功 2有充值订单 3有充电订单
+                $('#L_giveRule').find('option[value="' + res.data.giveRule + '"]').prop('selected', true);
+
+                if (Number(res.data.type) == 1) {
+                    /*
+                        新注册
+                     */
+                    //优惠券--优惠组合下拉渲染
+                    couponTypeChoose(res.data.newCouponType, '#L_newPersonCoupon');
+                    //新用户优惠券类型、优惠券--优惠组合
+                    $('#L_newCouponType').find('option[value="' + res.data.newCouponType + '"]').prop('selected', true);
+                    if (Number(res.data.newCouponType) == 1) {
+                        //优惠券
+                        //新用户优惠券选择
+                        res.data.newCoupons && ($('#L_newPersonCoupon').find('option[value="' + res.data.newCoupons.id + '"]').prop('selected', true));
+                    } else if (Number(res.data.newCouponType) == 2) {
+                        //优惠组合
+                        res.data.newGroupCoupons && ($('#L_newPersonCoupon').find('option[value="' + res.data.newGroupCoupons.id + '"]').prop('selected', true));
+                    }
+                } else if (Number(res.data.type) == 2) {
+                    /*
+                        老带新
+                     */
+                    //优惠券--优惠组合下拉渲染
+                    couponTypeChoose(res.data.newCouponType, '#L_newPersonCoupon');
+                    couponTypeChoose(res.data.oldCouponType, '#L_oldPersonCoupon');
+                    $('#L_newCouponType').find('option[value="' + res.data.newCouponType + '"]').prop('selected', true);
+                    $('#L_oldCouponType').find('option[value="' + res.data.newCouponType + '"]').prop('selected', true);
+                    //新用户
+                    if (Number(res.data.newCouponType) == 1) {
+                        //优惠券
+                        res.data.newCoupons && ($('#L_newPersonCoupon').find('option[value="' + res.data.newCoupons.id + '"]').prop('selected', true));
+                    } else if (Number(res.data.newCouponType) == 2) {
+                        //优惠组合
+                        res.data.newGroupCoupons && ($('#L_newPersonCoupon').find('option[value="' + res.data.newGroupCoupons.id + '"]').prop('selected', true));
+                    }
+                    //老用户
+                    if (Number(res.data.oldCouponType) == 1) {
+                        //优惠券
+                        res.data.oldCoupons && ($('#L_oldPersonCoupon').find('option[value="' + res.data.oldCoupons.id + '"]').prop('selected', true));
+                    } else if (Number(res.data.oldCouponType) == 2) {
+                        //优惠组合
+                        res.data.oldGroupCoupons && ($('#L_oldPersonCoupon').find('option[value="' + res.data.oldGroupCoupons.id + '"]').prop('selected', true));
+                    }
+                }
+                form.render('select');
+            })
+            .fail(function(err) {
+                console.log(err);
+            });
+    }
+
+    /*
+        活动类型选择--新注册模板、老带新模板
+     */
+    form.on('select(type)', function(data) {
+        var value = data.value;
+        activityTypeChoose(value);
+    });
+
+    //新用户
+    //
+    form.on('select(newPersonCoupon)', function(data) {
+        // var date = data.elem[data.elem.selectedIndex].getAttribute("name");
+        renderTimeArr();
+    });
+    //老用户
+    form.on('select(oldPersonCoupon)', function(data) {
+        // var date = data.elem[data.elem.selectedIndex].getAttribute("name");
+        renderTimeArr();
+    });
+
+    /*
+        比较活动时间和优惠券时间
+     */
+    utils.start2endDate('#L_startTime', '#L_endTime', '', function(value) {
+        renderTimeArr(value);
+    });
+
+    form.verify({
+        checkAcCoTime: function() {
+            renderTimeArr();
+        }
+    });
+    //监听提交
+    form.on('submit(save)', function(data) {
+        //编辑
+        data.field.startTime = utils.checkDate(data.field.startTime);
+        data.field.endTime = utils.checkDate(data.field.endTime);
+        utils.GetUrlpara('id') != null ? editSubmit(data) : addSubmit(data);
+        return false;
+    });
+    </script>
+</body>
+
+</html>

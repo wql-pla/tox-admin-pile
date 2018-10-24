@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>桩站管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../css/font.css">
+    <link rel="stylesheet" href="../../../css/xadmin.css">
+</head>
+
+<body>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote">
+            <h1>桩站管理</h1>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+            <legend>查询功能区</legend>
+            <div class="layui-field-box">
+                <div class="layui-row">
+                    <form class="layui-form x-so">
+                        <div class="layui-form-item" id="distpicker">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">省份</label>
+                                    <div class="layui-input-inline">
+                                        <select name="P1" lay-filter="province" lay-search="" id="L_province"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">城市</label>
+                                    <div class="layui-input-inline">
+                                        <!--  lay-ignore -->
+                                        <select name="C1" lay-filter="city" lay-search="" id="L_city"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">区域</label>
+                                    <div class="layui-input-inline">
+                                        <select name="A1" lay-filter="area" lay-search="" id="L_area"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">桩站名称</label>
+                                    <div class="layui-input-inline">
+                                        <select name="stationName" lay-search="" lay-filter="pile" id="L_pile"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">启用状态</label>
+                                    <div class="layui-input-inline">
+                                        <select name="status" lay-search="" lay-filter="status" id="status">
+                                            <option value="">请选择</option>
+                                            <option value="0">停用</option>
+                                            <option value="1">启用</option>
+                                            <option value="2">建设中</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-inline">
+                                    <button type="button" title="搜索" class="layui-btn" lay-filter="search" lay-submit=""><i class="layui-icon">&#xe615;</i>搜索</button>
+                                    <button type="button" id="L_reset" title="重置" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe631;</i>重置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field">
+            <legend>桩站列表</legend>
+            <div class="layui-field-box">
+                <div class="layui-form">
+                    <button class="layui-btn" title="批量新建电桩" onclick="utils._open('批量新建电桩','./uploadStation.html',40,50)"><i class="layui-icon">&#xe681;</i>批量导入</button>
+                    <button class="layui-btn" onclick="utils._open('桩站新增','./stationAdd.html',100,100)"><i class="layui-icon">&#xe654;</i>新增</button>
+                    <button class="layui-btn" onclick="confirmOpen(this,'1');" title="启用"><i class="layui-icon">&#xe62f;</i>启用</button>
+                    <button class="layui-btn" onclick="confirmOpen(this,'0');" title="停用"><i class="layui-icon">&#xe601;</i>停用</button>
+                    <table class="layui-table" lay-even>
+                        <thead>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose">
+                                </td>
+                                <td>桩站名称</td>
+                                <td>启用状态</td>
+                                <td>省份</td>
+                                <td>城市</td>
+                                <td>区域</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                    <div id="pageWrap"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.data.min.js"></script>
+    <script type="text/javascript" src="../../../lib/layui-city-select/distpicker.js"></script>
+    <script type="text/javascript" src="../../../js/public.js"></script>
+    <script type="text/javascript">
+    //省市区
+    $('#distpicker').distpicker('reset', true);
+    $('#distpicker').distpicker({
+        province: '天津市',
+        city: '天津市市辖区',
+        district: '和平区',
+    });
+    $('#L_reset').click(function() {
+        $('form')[0].reset();
+        $('#distpicker').distpicker('reset', true);
+    });
+
+    //获取桩站信息
+    utils.selTemplate('#L_pile', 2, 3);
+
+    var total = "";
+
+    function getList(data) {
+        $.ajax({
+            type: "post",
+            async: false,
+            url: ajaxUrl + '/station/selectStations',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                // console.log(res);
+                total = res.data.total;
+                var data = res.data.list;
+                var s = "";
+                $.each(data, function(v, o) {
+                    s += '<tr><td><input type="checkbox" name="checkout" lay-skin="primary" lay-filter="choose" value="' + o.id + '"/></td>';
+                    s += '<td>' + utils.isNull(o.stationName) + '</td>';
+                    s += '<td>' + utils.getJson("qtStatus", o.status) + '</td>';
+                    s += '<td>' + utils.isNull(o.province) + '</td>';
+                    s += '<td>' + utils.isNull(o.city) + '</td>';
+                    s += '<td>' + utils.isNull(o.region) + '</td>';
+                    s += '<td><button type="button" class="layui-btn layui-btn-mini"  onclick="utils._open(\'桩站详情\',\'./stationEdit.html?id=' + o.id + '\',100,100)"><i class="layui-icon">&#xe642;</i>编辑</button></td></tr>';
+                });
+                if (data.length > 0) {
+                    $("#tbody").html(s);
+                } else {
+                    $("#tbody").html("<tr style='width:100%;'><td colspan='" + $('thead td').length + "' align='center'>暂无数据</td></tr>");
+                }
+                //全选
+                utils.selectAll('allChoose', 'choose');
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function initList(pageSize) {
+        var mydata = {
+            pageNum: 0,
+            pageSize: pageSize || $('.layui-laypage-limits').children('input').val(),
+            province: utils.isUndefined($('#L_province').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            city: utils.isUndefined($('#L_city').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            region: utils.isUndefined($('#L_area').next('.layui-form-select').find('.layui-this').attr('lay-value')),
+            stationName: utils.isUndefined($('#L_pile').next('.layui-form-select').find('.layui-this').text()),
+            status: utils.isUndefined($('#status').next('.layui-form-select').find('.layui-this').attr('lay-value'))
+        }
+        getList(mydata);
+        utils.pages(total, getList, mydata);
+    }
+    //初始化
+    initList(10);
+
+    //搜索
+    form.on('submit(search)', function(data) {
+        utils._loading(function() {
+            data && initList(10);
+        });
+        return false;
+    });
+
+    function confirmOpen(obj, id) {
+        var title = $(obj).attr('title');
+        var Arr = $('input[name="checkout"]:checked');
+        var ArrCheck = [];
+        for (var i = 0; i < Arr.length; i++) {
+            ArrCheck.push(Arr[i].value);
+        }
+        var str = ArrCheck.join(',');
+        if (str == '') {
+            utils._tips('请至少勾选一项！', 1000);
+        } else {
+            utils._confirm('确认' + title, function() {
+                utils._loading(function() {
+                    $.ajax({
+                        type: "post",
+                        url: ajaxUrl + "/station/updateStats?id=" + str + "&status=" + id,
+                        async: false,
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function(res) {
+                            // console.log(res);
+                            if (Number(res.result) == 100) {
+                                utils._msg(res.msg, function() {
+                                    window.location.reload(true);
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log(err);
+                        }
+                    });
+                }, title + '中，请稍后...');
+            });
+        }
+    }
+    </script>
+</body>
+
+</html>
